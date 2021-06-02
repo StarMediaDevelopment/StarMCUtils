@@ -1,0 +1,4 @@
+name: StarMCUtils
+main: com.starmediadev.starmcutils.StarMCUtils
+version: ${project.version}
+api-version: 1.16
