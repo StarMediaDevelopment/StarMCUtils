@@ -1,251 +1,348 @@
 package com.starmediadev.starmcutils.builder;
 
-import com.starmediadev.starmcutils.inventory.NBTWrapper;
+import com.mojang.authlib.GameProfile;
+import com.starmediadev.starmcutils.skin.Skin;
 import com.starmediadev.starmcutils.util.MCUtils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import java.lang.reflect.Field;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class ItemBuilder {
-
-    private int amount = 0;
-    private int durability = 0;
-    private Map<Enchantment, Integer> enchantments = new HashMap<>();
-    private boolean glowing;
+    private String displayName;
+    private List<String> lore = new LinkedList<>();
+    private Map<Enchantment, Integer> enchantments = new HashMap<>(), storedEnchantments = new HashMap<>();
     private Set<ItemFlag> itemFlags = new HashSet<>();
-    private ItemStack itemStack;
-    private List<String> lore = new ArrayList<>();
-    private Material material = Material.AIR;
-    private String name;
-    private Map<String, String> nbtData = new HashMap<>();
+    private boolean unbreakable;
+    private DyeColor bannerColor;
+    private List<Pattern> bannerPatterns = new ArrayList<>();
+    private BlockState blockState;
+    private String bookTitle, bookAuthor;
+    private List<String> bookPages = new LinkedList<>();
+    private Color armorColor;
+    private PotionEffectType mainEffect;
+    private List<PotionEffect> potionEffects = new ArrayList<>();
+    private int repairCost = -1;
     private UUID skullOwner;
-    private boolean unbreakable = false, clearFlags, clearEnchantments, clearLore;
-    private EntityType entityType;
-
+    private Skin skullSkin;
+    private int amount = 1, durability;
+    private Material material;
+    private short damage;
+    
+    public ItemStack build() {
+        ItemStack itemStack = new ItemStack(material, amount, damage);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (displayName != null) {
+            itemMeta.setDisplayName(MCUtils.color(displayName));
+        }
+        
+        if (!lore.isEmpty()) {
+            List<String> coloredLore = new LinkedList<>();
+            lore.forEach(line -> coloredLore.add(MCUtils.color(line)));
+            itemMeta.setLore(coloredLore);
+        }
+        
+        if (!enchantments.isEmpty()) {
+            enchantments.forEach((enchant, level) -> itemMeta.addEnchant(enchant, level, true));
+        }
+        
+        if (!storedEnchantments.isEmpty()) {
+            if (itemMeta instanceof EnchantmentStorageMeta enchantStorage) {
+                storedEnchantments.forEach((enchant, level) -> enchantStorage.addStoredEnchant(enchant, level, true));
+            }
+        }
+        
+        if (!itemFlags.isEmpty()) {
+            itemMeta.addItemFlags(itemFlags.toArray(new ItemFlag[0]));
+        }
+        
+        itemMeta.setUnbreakable(unbreakable);
+    
+        if (itemMeta instanceof BannerMeta bannerMeta) {
+            if (bannerColor != null) bannerMeta.setBaseColor(bannerColor);
+            bannerMeta.setPatterns(bannerPatterns);
+        }
+        
+        if (itemMeta instanceof BlockStateMeta) {
+            if (blockState != null) {
+                BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
+                blockStateMeta.setBlockState(blockState);
+            }
+        }
+        
+        if (itemMeta instanceof BookMeta bookMeta) {
+            if (bookTitle != null) {
+                bookMeta.setTitle(MCUtils.color(bookTitle));
+            }
+            if (bookAuthor != null) {
+                bookMeta.setTitle(MCUtils.color(bookAuthor));
+            }
+            
+            if (!bookPages.isEmpty()) {
+                bookMeta.setPages(bookPages);
+            }
+        }
+        
+        if (itemMeta instanceof LeatherArmorMeta) {
+            if (armorColor != null) {
+                LeatherArmorMeta leatherArmorMeta =  (LeatherArmorMeta) itemMeta;
+                leatherArmorMeta.setColor(armorColor);
+            }
+        }
+        
+        if (itemMeta instanceof PotionMeta) {
+            if (mainEffect != null) {
+                PotionMeta potionMeta = (PotionMeta) itemMeta;
+                potionMeta.setMainEffect(mainEffect);
+                if (!potionEffects.isEmpty()) {
+                    potionEffects.forEach(potionEffect -> potionMeta.addCustomEffect(potionEffect, true));
+                }
+            }
+        }
+        
+        if (itemMeta instanceof Repairable) {
+            if (repairCost != -1) {
+                Repairable repairable = (Repairable) itemMeta;
+                repairable.setRepairCost(repairCost);
+            }
+        }
+        
+        if (itemMeta instanceof SkullMeta) {
+            if (this.skullOwner != null) {
+                SkullMeta skullMeta = (SkullMeta) itemMeta;
+                String skullOwner = null;
+//                User user = CenturionsCore.getInstance().getUserManager().getUser(this.skullOwner);
+//                if (user != null) {
+//                    skullOwner = user.getName();
+//                } else {
+//                    skullOwner = CenturionsUtils.getNameFromUUID(this.skullOwner);
+//                }
+    
+                if (skullOwner != null) {
+                    skullMeta.setOwner(skullOwner);
+        
+                    
+                }
+    
+                GameProfile mcProfile = null;
+    
+//                if (this.skullSkin != null) {
+//                    mcProfile = SpigotUtils.skinToProfile(skullSkin);
+//                } else {
+//                    Player player = Bukkit.getPlayer(this.skullOwner);
+//                    if (player != null) {
+//                        mcProfile = ((CraftPlayer) player).getProfile();
+//                    } else {
+//                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(this.skullOwner);
+//                        if (offlinePlayer != null) {
+//                            mcProfile = ((CraftOfflinePlayer) offlinePlayer).getProfile();
+//                            if (mcProfile == null) {
+//                                List<IRecord> records = CenturionsCore.getInstance().getDatabase().getRecords(SkinRecord.class, "uuid", this.skullOwner.toString());
+//                                for (IRecord record : records) {
+//                                    if (record instanceof SkinRecord) {
+//                                        mcProfile = SpigotUtils.skinToProfile(((SkinRecord) record).toObject());
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+                
+                if (mcProfile != null) {
+                    try {
+                        Field field = skullMeta.getClass().getDeclaredField("profile");
+                        field.setAccessible(true);
+                        field.set(skullMeta, mcProfile);
+                    } catch (Exception e) {}
+                }
+            }
+        }
+        
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+    
     public ItemBuilder(Material material) {
         this.material = material;
     }
-
-    public ItemBuilder(ItemStack stack) {
-        this.itemStack = stack;
+    
+    public ItemBuilder(Material material, int amount) {
+        this.material = material;
+        this.amount = amount;
     }
-
-    public ItemBuilder(EntityType entityType) {
-        this.entityType = entityType;
+    
+    public ItemBuilder(Material material, int amount, short data) {
+        this.material = material;
+        this.amount = amount;
+        this.damage = data;
     }
-
-    public ItemBuilder() {
+    
+    public ItemBuilder setMaterial(Material material) {
+        this.material = material;
+        return this;
     }
-
+    
+    
+    
+    public ItemBuilder setDamage(short damage) {
+        this.damage = damage;
+        return this;
+    }
+    
     public static ItemBuilder start(Material material) {
         return new ItemBuilder(material);
     }
-
-    public static ItemBuilder start(ItemStack itemstack) {
-        return new ItemBuilder(itemstack);
+    
+    public static ItemBuilder start(Material material, int amount) {
+        return new ItemBuilder(material, amount);
     }
-
-    public static ItemBuilder start(EntityType entityType) {
-        return new ItemBuilder(entityType);
+    
+    public static ItemBuilder start(Material material, int amount, short data) {
+        return new ItemBuilder(material, amount, data);
     }
-
-    public ItemBuilder setEntityType(EntityType entityType) {
-        this.entityType = entityType;
+    
+    public ItemBuilder setDisplayName(String displayName) {
+        this.displayName = displayName;
         return this;
     }
-
-    public ItemBuilder amount(int amount) {
-        this.amount = amount;
+    
+    public ItemBuilder setLore(List<String> lore) {
+        this.lore = lore;
         return this;
     }
-
-    public ItemBuilder name(String name) {
-        this.name = name;
+    
+    public ItemBuilder addLoreLine(String line) {
+        this.lore.add(line);
         return this;
     }
-
-    public ItemBuilder durability(int durability) {
-        return durability((short) durability);
-    }
-
-    public ItemBuilder durability(short durability) {
-        this.durability = durability;
+    
+    public ItemBuilder setEnchantments(Map<Enchantment, Integer> enchantments) {
+        this.enchantments = enchantments;
         return this;
     }
-
-    public ItemBuilder itemFlags(ItemFlag... flags) {
-        this.itemFlags.addAll(Arrays.asList(flags));
-        return this;
-    }
-
-    public ItemBuilder addEnchantment(Enchantment enchantment, Integer level) {
+    
+    public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
         this.enchantments.put(enchantment, level);
         return this;
     }
-
-    public ItemBuilder withEnchantments(Map<Enchantment, Integer> enchantments) {
-        this.enchantments.putAll(enchantments);
+    
+    public ItemBuilder setStoredEnchantments(Map<Enchantment, Integer> storedEnchantments) {
+        this.storedEnchantments = storedEnchantments;
         return this;
     }
-
-    public ItemBuilder unbreakable() {
-        this.unbreakable = true;
+    
+    public ItemBuilder addStoredEnchantment(Enchantment enchantment, int level) {
+        this.storedEnchantments.put(enchantment, level);
         return this;
     }
-
-    public ItemBuilder lore(String... lore) {
-        this.lore.addAll(Arrays.asList(lore));
+    
+    public ItemBuilder setItemFlags(Set<ItemFlag> itemFlags) {
+        this.itemFlags = itemFlags;
         return this;
     }
-
-    public ItemBuilder lore(List<String> lore) {
-        this.lore.addAll(lore);
+    
+    public ItemBuilder addItemFlag(ItemFlag... flags) {
+        this.itemFlags.addAll(Arrays.asList(flags));
         return this;
     }
-
-    public ItemBuilder clearEnchants() {
-        this.enchantments.clear();
-        this.clearEnchantments = true;
+    
+    public ItemBuilder setUnbreakable(boolean unbreakable) {
+        this.unbreakable = unbreakable;
         return this;
     }
-
-    public ItemBuilder clearLore() {
-        this.lore.clear();
-        this.clearLore = true;
+    
+    public ItemBuilder setBannerColor(DyeColor bannerColor) {
+        this.bannerColor = bannerColor;
         return this;
     }
-
-    public ItemBuilder addNBTString(String key, String value) {
-        this.nbtData.put(key, value);
+    
+    public ItemBuilder setBannerPatterns(List<Pattern> bannerPatterns) {
+        this.bannerPatterns = bannerPatterns;
         return this;
     }
-
-    public ItemBuilder clearNBT() {
-        this.nbtData.clear();
+    
+    public ItemBuilder setBlockState(BlockState blockState) {
+        this.blockState = blockState;
         return this;
     }
-
-    public ItemBuilder clearFlags() {
-        this.itemFlags.clear();
-        this.clearFlags = true;
+    
+    public ItemBuilder setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
         return this;
     }
-
-    public ItemStack buildItem() {
-        if (this.entityType != null) {
-            String name = entityType.name() + "_SPAWN_EGG";
-            this.material = Material.valueOf(name.toUpperCase());
-        }
-
-        ItemStack itemStack = (this.itemStack != null) ? this.itemStack.clone() : new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null) {
-            itemMeta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
-        }
-
-        if (itemStack.getType().equals(Material.PLAYER_HEAD) && this.skullOwner != null) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(skullOwner);
-            if (player != null) {
-                SkullMeta skullMeta = ((SkullMeta) itemMeta);
-                skullMeta.setOwningPlayer(player);
-            }
-        }
-
-        if (name != null && !name.equalsIgnoreCase(itemMeta.getDisplayName())) {
-            itemMeta.setDisplayName(MCUtils.color(name));
-        }
-        if (this.clearLore) {
-            itemMeta.setLore(new ArrayList<>());
-        }
-        if (!this.lore.isEmpty() && !this.lore.equals(itemMeta.getLore())) {
-            List<String> coloredLore = new ArrayList<>();
-            this.lore.forEach(l -> {
-                if (l != null) { coloredLore.add(MCUtils.color(l)); }
-            });
-            itemMeta.setLore(coloredLore);
-        }
-
-        if (this.unbreakable != itemMeta.isUnbreakable()) {
-            itemMeta.setUnbreakable(unbreakable);
-        }
-
-        if (this.clearFlags) {
-            itemMeta.removeItemFlags(ItemFlag.values());
-        }
-
-        if (glowing) {
-            this.itemFlags.add(ItemFlag.HIDE_ENCHANTS);
-        }
-
-        if (!itemFlags.isEmpty() && !itemMeta.getItemFlags().equals(itemFlags)) {
-            itemMeta.addItemFlags(itemFlags.toArray(new ItemFlag[0]));
-        }
-
-        itemStack.setItemMeta(itemMeta);
-
-        if (this.clearEnchantments) {
-            for (Enchantment enchantment : Enchantment.values()) {
-                if (itemStack.containsEnchantment(enchantment)) {
-                    itemStack.removeEnchantment(enchantment);
-                }
-            }
-        }
-
-        if (glowing && this.enchantments.isEmpty()) {
-            this.enchantments.put(Enchantment.ARROW_DAMAGE, 1);
-        }
-
-        if (!this.enchantments.isEmpty()) {
-            itemStack.addUnsafeEnchantments(enchantments);
-        }
-
-        if (durability != 0) {
-            if (itemMeta instanceof Damageable) {
-                ((Damageable) itemMeta).getDamage();
-            }
-        }
-
-        if (amount != 0) {
-            itemStack.setAmount(amount);
-        }
-
-        if (!nbtData.isEmpty()) {
-            for (Entry<String, String> entry : this.nbtData.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                try {
-                    itemStack = NBTWrapper.addNBTString(itemStack, key, value);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return itemStack;
-    }
-
-    public ItemBuilder setLoreLine(int line, String string) {
-        try {
-            this.lore.set(line, string);
-        } catch (IndexOutOfBoundsException e) {
-            this.lore.add(line, string);
-        }
+    
+    public ItemBuilder setBookAuthor(String bookAuthor) {
+        this.bookAuthor = bookAuthor;
         return this;
     }
-
-    public ItemBuilder skullOwner(UUID skullOwner) {
+    
+    public ItemBuilder setBookPages(List<String> bookPages) {
+        this.bookPages = bookPages;
+        return this;
+    }
+    
+    public ItemBuilder setArmorColor(Color armorColor) {
+        this.armorColor = armorColor;
+        return this;
+    }
+    
+    public ItemBuilder setMainEffect(PotionEffectType mainEffect) {
+        this.mainEffect = mainEffect;
+        return this;
+    }
+    
+    public ItemBuilder setPotionEffects(List<PotionEffect> potionEffects) {
+        this.potionEffects = potionEffects;
+        return this;
+    }
+    
+    public ItemBuilder addPotionEffects(PotionEffect... potionEffects) {
+        this.potionEffects.addAll(Arrays.asList(potionEffects));
+        return this;
+    }
+    
+    public ItemBuilder setRepairCost(int repairCost) {
+        this.repairCost = repairCost;
+        return this;
+    }
+    
+    public ItemBuilder setSkullOwner(UUID skullOwner) {
         this.skullOwner = skullOwner;
         return this;
     }
-
-    public ItemBuilder glowing(boolean glow) {
-        this.glowing = glow;
+    
+    public ItemBuilder setSkullSkin(Skin skullSkin) {
+        this.skullSkin = skullSkin;
+        return this;
+    }
+    
+    public ItemBuilder setAmount(int amount) {
+        this.amount = amount;
+        return this;
+    }
+    
+    public ItemBuilder setDurability(int durability) {
+        this.durability = durability;
+        return this;
+    }
+    
+    public ItemBuilder withLore(String... lore) {
+        if (lore != null) {
+            for (String s : lore) {
+                addLoreLine(s);
+            }
+        }
+        
         return this;
     }
 }
