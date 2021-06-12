@@ -1,12 +1,12 @@
 package com.starmediadev.starmcutils.inventory;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_16_R3.MojangsonParser;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -70,7 +70,7 @@ public class ItemUtils {
                     result[i].put("meta", is.getItemMeta().serialize());
                 }
 
-                net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
+                net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
                 if (nmsItem.hasTag()) {
                     result[i].put("tag", nmsItem.getTag().toString());
                 }
@@ -90,7 +90,7 @@ public class ItemUtils {
                 result.put("meta", is.getItemMeta().serialize());
             }
 
-            net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
+            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
             if (nmsItem.hasTag()) {
                 result.put("tag", nmsItem.getTag().toString());
             }
@@ -140,8 +140,8 @@ public class ItemUtils {
         ItemStack is = ItemStack.deserialize(s);
         is.setItemMeta((ItemMeta) ConfigurationSerialization.deserializeObject(im));
         if (s.containsKey("tag")) {
-            net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
-            NBTTagCompound compound = MojangsonParser.parse((String) s.get("tag"));
+            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
+            CompoundTag compound = TagParser.parseTag((String) s.get("tag"));
             nmsItem.setTag(compound);
         }
         return is;

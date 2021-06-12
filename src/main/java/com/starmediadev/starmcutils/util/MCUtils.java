@@ -3,7 +3,7 @@ package com.starmediadev.starmcutils.util;
 import net.md_5.bungee.api.ChatColor;
 
 public final class MCUtils {
-    
+
     public static String color(String uncolored) {
         String text = ChatColor.translateAlternateColorCodes('&', uncolored);
         StringBuilder colored = new StringBuilder();
@@ -16,10 +16,18 @@ public final class MCUtils {
                     colored.append(color);
                     i++; //This will skip the other color char
                 }
+            } else if (c == '#') {
+                if (text.length() > i + 6) {
+                    String colorCode = c + text.substring(i + 1, i + 7);
+                    ChatColor color = ChatColor.of(colorCode);
+                    colored.append(color);
+                    i += 6;
+                }
+            } else {
+                colored.append(c);
             }
-            colored.append(c);
         }
-        
+
         return colored.toString();
     }
 }

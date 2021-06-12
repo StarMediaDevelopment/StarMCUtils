@@ -2,13 +2,10 @@ package com.starmediadev.starmcutils.util;
 
 import net.md_5.bungee.api.ChatColor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class ColorUtils {
-    private static List<Character> colorChars = new ArrayList<>();
+    private static List<Character> colorChars = new ArrayList<>(Collections.singleton('&'));
     private static Map<String, ChatColor> colors = new HashMap<>();
     
     public static void addCustomColor(String code, String hex) {
