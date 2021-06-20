@@ -1,8 +1,8 @@
 package com.starmediadev.starmcutils.util;
 
 public class Position {
-    private int x, y, z;
-    private float yaw, pitch;
+    protected int x, y, z;
+    protected float yaw, pitch;
 
     public Position() {
         this(0, 0, 0);

@@ -1,6 +1,8 @@
 package com.starmediadev.starmcutils.util;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 
 public final class MCUtils {
 
@@ -29,5 +31,13 @@ public final class MCUtils {
         }
 
         return colored.toString();
+    }
+
+    public static Position locationToPosition(Location location) {
+        return new Position(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
+    }
+
+    public static Location positionToLocation(World world, Position position) {
+        return new Location(world, position.getX(), position.getY(), position.getZ(), position.getYaw(), position.getPitch());
     }
 }
