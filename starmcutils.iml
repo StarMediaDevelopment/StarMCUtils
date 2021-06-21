@@ -24,6 +24,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:remapped-mojang:1.17-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.starmediadev:star-utils:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="StarUtils" />
   </component>
 </module>
