@@ -16,7 +16,7 @@ public final class MCUtils {
                     String code = String.valueOf(c) + text.charAt(i + 1);
                     ChatColor color = ColorUtils.getCustomColor(code);
                     colored.append(color);
-                    i++; //This will skip the other color char
+                    i++;
                 }
             } else if (c == '#') {
                 if (text.length() > i + 6) {

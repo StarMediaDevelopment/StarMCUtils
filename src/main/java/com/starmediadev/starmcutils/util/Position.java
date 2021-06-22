@@ -1,5 +1,7 @@
 package com.starmediadev.starmcutils.util;
 
+import java.util.Objects;
+
 public class Position {
     protected int x, y, z;
     protected float yaw, pitch;
@@ -38,5 +40,18 @@ public class Position {
 
     public float getPitch() {
         return pitch;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Position position = (Position) o;
+        return x == position.x && y == position.y && z == position.z;
+    }
+
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 }
