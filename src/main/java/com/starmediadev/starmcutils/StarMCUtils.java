@@ -6,7 +6,6 @@ import com.starmediadev.starmcutils.updater.Updater;
 import com.starmediadev.starmcutils.util.ColorUtils;
 import com.starmediadev.starmcutils.util.MCUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
