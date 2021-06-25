@@ -1,5 +1,5 @@
 name: StarMCUtils
-main: com.starmediadev.starmcutils.StarMCUtils
+main: com.starmediadev.plugins.starmcutils.StarMCUtils
 version: ${project.version}
 api-version: 1.16
 libraries:
