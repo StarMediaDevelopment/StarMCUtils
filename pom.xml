@@ -6,7 +6,7 @@
 
     <groupId>com.starmediadev.plugins</groupId>
     <artifactId>starmcutils</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>com.starmediadev</groupId>
             <artifactId>star-utils</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
