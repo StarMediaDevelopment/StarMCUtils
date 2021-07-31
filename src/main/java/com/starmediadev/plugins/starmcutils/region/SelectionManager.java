@@ -3,7 +3,9 @@ package com.starmediadev.plugins.starmcutils.region;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class SelectionManager {
 
