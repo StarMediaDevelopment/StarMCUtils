@@ -1,21 +1,15 @@
 package com.starmediadev.plugins.starmcutils;
 
-import com.starmediadev.plugins.starmcutils.region.Cuboid;
 import com.starmediadev.plugins.starmcutils.region.SelectionManager;
 import com.starmediadev.plugins.starmcutils.updater.Updater;
 import com.starmediadev.plugins.starmcutils.util.ColorUtils;
 import com.starmediadev.plugins.starmcutils.util.MCUtils;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class StarMCUtils extends JavaPlugin implements Listener {
-    
-    static {
-        ConfigurationSerialization.registerClass(Cuboid.class);
-    }
     
     private SelectionManager selectionManager = new SelectionManager();
     private Updater updater;

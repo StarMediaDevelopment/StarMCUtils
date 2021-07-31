@@ -1,15 +1,16 @@
 package com.starmediadev.plugins.starmcutils.region;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
-@SerializableAs("Cuboid")
-public class Cuboid implements ConfigurationSerializable {
+public class Cuboid {
 
     protected String worldName;
     protected World world;
@@ -21,28 +22,6 @@ public class Cuboid implements ConfigurationSerializable {
     }
 
     public Cuboid() {
-    }
-
-    public Map<String, Object> serialize() {
-        return new HashMap<>() {{
-            put("world", getWorld().getName());
-            put("xMin", xMin + "");
-            put("yMin", yMin + "");
-            put("zMin", zMin + "");
-            put("xMax", xMax + "");
-            put("yMax", yMax + "");
-            put("zMax", zMax + "");
-        }};
-    }
-
-    public Cuboid(Map<String, Object> serialized) {
-        this.worldName = (String) serialized.get("world");
-        this.xMin = Integer.parseInt((String) serialized.get("xMin"));
-        this.yMin = Integer.parseInt((String) serialized.get("yMin"));
-        this.zMin = Integer.parseInt((String) serialized.get("zMin"));
-        this.xMax = Integer.parseInt((String) serialized.get("xMax"));
-        this.yMax = Integer.parseInt((String) serialized.get("yMax"));
-        this.zMax = Integer.parseInt((String) serialized.get("zMax"));
     }
 
     public Iterator<Block> getBlockList() {
@@ -73,6 +52,10 @@ public class Cuboid implements ConfigurationSerializable {
             this.world = Bukkit.getWorld(this.worldName);
         }
         return world;
+    }
+    
+    public boolean contains(Entity entity) {
+        return contains(entity.getLocation());
     }
 
     public Location getCenter() {
