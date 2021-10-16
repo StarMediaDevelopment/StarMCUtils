@@ -1,6 +1,6 @@
 package com.starmediadev.plugins.starmcutils.integrations;
 
-import com.starmediadev.data.handlers.DataTypeHandler;
+import com.starmediadev.data.model.DataTypeHandler;
 import com.starmediadev.data.model.DataType;
 import com.starmediadev.plugins.starmcutils.util.Position;
 
