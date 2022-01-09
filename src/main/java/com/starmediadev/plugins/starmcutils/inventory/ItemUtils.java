@@ -1,6 +1,7 @@
 package com.starmediadev.plugins.starmcutils.inventory;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +30,7 @@ public class ItemUtils {
         }
         return null;
     }
-    public static String itemsToString(ItemStack[] items) {
+    public static MysqlxDatatypes.Scalar.String itemsToString(ItemStack[] items) {
         try {
             Map<String, Object>[] serializedItemStacks = serializeItemStacks(items);
             if (serializedItemStacks == null) return "empty";
