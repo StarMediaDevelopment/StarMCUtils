@@ -1,6 +1,7 @@
 package com.starmediadev.plugins.starmcutils.util;
 
 import com.starmediadev.utils.Utils;
+import com.starmediadev.utils.helper.StringHelper;
 import org.bukkit.Material;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class MaterialNames {
 
     private MaterialNames() {
         for (Material material : Material.values()) {
-            materialNames.put(material, Utils.capitalizeEveryWord(material.name()));
+            materialNames.put(material, StringHelper.capitalizeEveryWord(material.name()));
         }
 
         //This is where custom names can be set.
