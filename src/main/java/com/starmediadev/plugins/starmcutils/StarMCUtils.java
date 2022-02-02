@@ -27,6 +27,18 @@ public class StarMCUtils extends JavaPlugin implements Listener {
         }
     }
     
+    public Updater getUpdater() {
+        return updater;
+    }
+    
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
+    }
+    
+    public StarDataIntegration getStarDataIntegration() {
+        return starDataIntegration;
+    }
+    
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         e.setFormat(MCUtils.color("&f" + e.getPlayer().getName() + "&8: &f" + e.getMessage()));
