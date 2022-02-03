@@ -3,6 +3,7 @@ package com.starmediadev.plugins.starmcutils.util;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 
 public final class MCUtils {
 
@@ -31,6 +32,10 @@ public final class MCUtils {
         }
 
         return colored.toString();
+    }
+    
+    public static void debugSender(CommandSender sender, String message) {
+        sender.sendMessage(MCUtils.color("&7&o" + message));
     }
 
     public static Position locationToPosition(Location location) {
