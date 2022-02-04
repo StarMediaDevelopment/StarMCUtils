@@ -1,5 +1,6 @@
 package com.starmediadev.plugins.starmcutils.module;
 
+import com.starmediadev.plugins.starmcutils.util.Config;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,10 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class StarModule {
-    //TODO configs specific to module, requires a change to the PlayerActionCmd send message methods
     protected JavaPlugin plugin;
     protected String name;
     protected boolean enabled = true;
+    protected Config config;
     
     protected Map<String, CommandExecutor> commands = new HashMap<>();
     protected Set<Listener> listeners = new HashSet<>();
@@ -21,20 +22,39 @@ public abstract class StarModule {
     public StarModule(JavaPlugin plugin, String name) {
         this.plugin = plugin;
         this.name = name;
+        config = new Config(plugin, name.toLowerCase() + ".yml");
     }
     
-    public abstract void createCommandExecutors();
-    public abstract void createEventListeners();
+    public final void init() {
+        config.setup();
+        loadValuesFromConfig();
+        createCommandExecutors();
+        createEventListeners();
+    }
     
-    public String getName() {
+    public void save() {
+        config.save();
+    }
+    
+    protected void createCommandExecutors() {
+        
+    }
+    protected void createEventListeners() {
+        
+    }
+    protected void loadValuesFromConfig() {
+        
+    }
+    
+    public final String getName() {
         return name;
     }
     
-    public boolean isEnabled() {
+    public final boolean isEnabled() {
         return enabled;
     }
     
-    public void setEnabled(boolean enabled) {
+    public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
     
@@ -44,5 +64,9 @@ public abstract class StarModule {
     
     public final void registerListeners() {
         this.listeners.forEach(listener -> plugin.getServer().getPluginManager().registerEvents(listener, plugin));
+    }
+    
+    public final Config getConfig() {
+        return config;
     }
 }
