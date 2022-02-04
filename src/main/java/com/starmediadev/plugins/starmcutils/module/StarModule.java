@@ -10,16 +10,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class StarModule {
-    protected JavaPlugin plugin;
+public abstract class StarModule<P extends JavaPlugin> {
+    protected P plugin;
     protected String name;
     protected boolean enabled = true;
     protected Config config;
     
     protected Map<String, CommandExecutor> commands = new HashMap<>();
     protected Set<Listener> listeners = new HashSet<>();
+    protected Map<String, Object> defaultConfigValues = new HashMap<>();
     
-    public StarModule(JavaPlugin plugin, String name) {
+    public StarModule(P plugin, String name) {
         this.plugin = plugin;
         this.name = name;
         config = new Config(plugin, name.toLowerCase() + ".yml");
@@ -27,13 +28,19 @@ public abstract class StarModule {
     
     public final void init() {
         config.setup();
+        registerDefaultConfigValues();
+        saveDefaultValues();
         loadValuesFromConfig();
         createCommandExecutors();
         createEventListeners();
     }
     
-    public void save() {
+    public final void save() {
+        saveConfigSettings();
         config.save();
+    }
+    
+    protected void registerDefaultConfigValues() {
     }
     
     protected void createCommandExecutors() {
@@ -44,6 +51,16 @@ public abstract class StarModule {
     }
     protected void loadValuesFromConfig() {
         
+    }
+    
+    protected void saveConfigSettings() {
+        
+    }
+    
+    private void saveDefaultValues() {
+        this.defaultConfigValues.forEach((key, value) -> {
+            config.getConfiguration().set(key, value);
+        });
     }
     
     public final String getName() {
