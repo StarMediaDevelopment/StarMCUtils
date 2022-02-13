@@ -1,6 +1,7 @@
 package com.starmediadev.plugins.starmcutils.util;
 
 import com.starmediadev.utils.Utils;
+import com.starmediadev.utils.helper.StringHelper;
 import org.bukkit.entity.EntityType;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class EntityNames {
 
     private EntityNames() {
         for (EntityType entityType : EntityType.values()) {
-            entityNames.put(entityType, Utils.capitalizeEveryWord(entityType.name()));
+            entityNames.put(entityType, StringHelper.capitalizeEveryWord(entityType.name()));
         }
 
         //This is where custom names can be set.

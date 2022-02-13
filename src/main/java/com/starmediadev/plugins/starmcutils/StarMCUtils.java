@@ -3,7 +3,6 @@ package com.starmediadev.plugins.starmcutils;
 import com.starmediadev.plugins.starmcutils.integrations.StarDataIntegration;
 import com.starmediadev.plugins.starmcutils.region.SelectionManager;
 import com.starmediadev.plugins.starmcutils.updater.Updater;
-import com.starmediadev.plugins.starmcutils.util.ColorUtils;
 import com.starmediadev.plugins.starmcutils.util.MCUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -25,6 +24,18 @@ public class StarMCUtils extends JavaPlugin implements Listener {
         if (Bukkit.getPluginManager().getPlugin("StarData") != null) {
             this.starDataIntegration = new StarDataIntegration(this);
         }
+    }
+    
+    public Updater getUpdater() {
+        return updater;
+    }
+    
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
+    }
+    
+    public StarDataIntegration getStarDataIntegration() {
+        return starDataIntegration;
     }
     
     @EventHandler

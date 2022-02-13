@@ -1,7 +1,7 @@
 package com.starmediadev.plugins.starmcutils.inventory;
 
 import net.minecraft.nbt.StringTag;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public final class NBTWrapper {
