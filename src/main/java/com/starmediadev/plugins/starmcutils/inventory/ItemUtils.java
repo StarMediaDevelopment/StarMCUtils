@@ -1,28 +1,51 @@
 package com.starmediadev.plugins.starmcutils.inventory;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
+import com.starmediadev.plugins.starmcutils.helper.ReflectionHelper;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ItemUtils {
-    public static ItemStack saveItemsInNBT(ItemStack item, ItemStack[] items) throws Exception {
+    
+    private static Class<?> compoundTagClass, tagParserClass, craftItemStackClass, nmsItemStackClass;
+    private static Method asNMSCopyMethod, hasTagMethod, getTagMethod, parseTagMethod, setTagMethod;
+    
+    static {
+        try {
+            compoundTagClass = ReflectionHelper.getNMSClass("nbt", "CompoundTag");
+            tagParserClass = ReflectionHelper.getNMSClass("nbt", "TagParser");
+            craftItemStackClass = ReflectionHelper.getCraftBukkitClass("inventory", "CraftItemStack");
+            nmsItemStackClass = ReflectionHelper.getNMSClass("world.item", "ItemStack");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    
+        try {
+            asNMSCopyMethod = craftItemStackClass.getDeclaredMethod("asNMSCopy", ItemStack.class);
+            hasTagMethod = nmsItemStackClass.getDeclaredMethod("hasTag");
+            getTagMethod = nmsItemStackClass.getDeclaredMethod("getTag");
+            parseTagMethod = tagParserClass.getDeclaredMethod("parseTag", String.class);
+            setTagMethod = nmsItemStackClass.getDeclaredMethod("setTag", compoundTagClass);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static ItemStack saveItemsInNBT(ItemStack item, ItemStack[] items) {
         String dataString = itemsToString(items);
         NBTWrapper.addNBTString(item, "invdata", dataString);
         return item;
     }
-    public static ItemStack[] getItemsFromNBT(ItemStack item) throws Exception {
+    public static ItemStack[] getItemsFromNBT(ItemStack item) {
         String itemString = NBTWrapper.getNBTString(item, "invdata");
 
         if (!itemString.equals("")) {
@@ -30,7 +53,7 @@ public class ItemUtils {
         }
         return null;
     }
-    public static MysqlxDatatypes.Scalar.String itemsToString(ItemStack[] items) {
+    public static String itemsToString(ItemStack[] items) {
         try {
             Map<String, Object>[] serializedItemStacks = serializeItemStacks(items);
             if (serializedItemStacks == null) return "empty";
@@ -40,7 +63,7 @@ public class ItemUtils {
             oos.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (Exception e) {
-            //Logger.exception(e);
+            e.printStackTrace();
         }
         return "";
     }
@@ -70,10 +93,15 @@ public class ItemUtils {
                 if (is.hasItemMeta()) {
                     result[i].put("meta", is.getItemMeta().serialize());
                 }
-
-                net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
-                if (nmsItem.hasTag()) {
-                    result[i].put("tag", nmsItem.getTag().toString());
+    
+                try {
+                    Object nmsItem = asNMSCopyMethod.invoke(null, is);
+                    
+                    if ((boolean) hasTagMethod.invoke(nmsItem)) {
+                        result[i].put("tag", getTagMethod.invoke(nmsItem).toString());
+                    }
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -90,10 +118,14 @@ public class ItemUtils {
             if (is.hasItemMeta()) {
                 result.put("meta", is.getItemMeta().serialize());
             }
-
-            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
-            if (nmsItem.hasTag()) {
-                result.put("tag", nmsItem.getTag().toString());
+    
+            try {
+                Object nmsItem = asNMSCopyMethod.invoke(null, is);
+                if ((boolean) hasTagMethod.invoke(nmsItem)) {
+                    result.put("tag", getTagMethod.invoke(nmsItem).toString());
+                }
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
             }
 
             try {
@@ -135,15 +167,19 @@ public class ItemUtils {
         return items;
     }
 
-    private static ItemStack deserializeItemMap(Map<String, Object> s) throws CommandSyntaxException {
+    private static ItemStack deserializeItemMap(Map<String, Object> s) {
         Map<String, Object> im = new HashMap<>((Map<String, Object>) s.remove("meta"));
         im.put("==", "ItemMeta");
         ItemStack is = ItemStack.deserialize(s);
         is.setItemMeta((ItemMeta) ConfigurationSerialization.deserializeObject(im));
         if (s.containsKey("tag")) {
-            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
-            CompoundTag compound = TagParser.parseTag((String) s.get("tag"));
-            nmsItem.setTag(compound);
+            try {
+                Object nmsItem = asNMSCopyMethod.invoke(null, is);
+                Object compoundTag = parseTagMethod.invoke(null, s.get("tag"));
+                setTagMethod.invoke(nmsItem, compoundTag);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
         return is;
     }
