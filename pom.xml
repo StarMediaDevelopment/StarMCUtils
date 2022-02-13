@@ -75,6 +75,11 @@
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <name>Star Media Development LLC Maven</name>
+            <url>https://maven.pkg.github.com/starmediadevelopment/maven</url>
+        </repository>
     </repositories>
     
     <dependencies>
@@ -82,12 +87,6 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>${minecraft.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.starmediadev</groupId>
-            <artifactId>stardata</artifactId>
-            <version>1.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -103,4 +102,12 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Star Media Development LLC Maven</name>
+            <url>https://maven.pkg.github.com/starmediadevelopment/maven</url>
+        </repository>
+    </distributionManagement>
 </project>
