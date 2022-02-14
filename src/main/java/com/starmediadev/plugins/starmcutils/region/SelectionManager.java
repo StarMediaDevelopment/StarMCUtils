@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * This manages selections. 
+ * This class is provided as a Bukkit Service from StarMCUtils. Use that to get a copy of the instance of this class, or create one yourself
+ */
 public class SelectionManager {
 
     private Map<UUID, Selection> selections = new HashMap<>();

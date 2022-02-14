@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * This manages the skins from the Mojang API
+ */
 public class SkinManager {
     private static final String skinUrlString = "https://sessionserver.mojang.com/session/minecraft/profile/{uuid}?unsigned=false";
     
@@ -19,6 +22,11 @@ public class SkinManager {
     
     public SkinManager() {}
     
+    /**
+     * Gets a skin based on the UUID
+     * @param uuid The UUID of the skin
+     * @return The Skin instance
+     */
     public Skin getSkin(UUID uuid) {
         if (skins.containsKey(uuid)) {
             return skins.get(uuid);

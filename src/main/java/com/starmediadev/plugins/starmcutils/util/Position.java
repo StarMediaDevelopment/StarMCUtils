@@ -1,10 +1,17 @@
 package com.starmediadev.plugins.starmcutils.util;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+
 import java.util.Objects;
 
 public class Position {
     protected int x, y, z;
     protected float yaw, pitch;
+    
+    public static Position fromLocation(Location location) {
+        return new Position(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
+    }
 
     public Position() {
         this(0, 0, 0);
@@ -60,6 +67,10 @@ public class Position {
 
     public void setPitch(float pitch) {
         this.pitch = pitch;
+    }
+    
+    public Location toLocation(World world) {
+        return new Location(world, x, y, z, yaw, pitch);
     }
 
     public boolean equals(Object o) {

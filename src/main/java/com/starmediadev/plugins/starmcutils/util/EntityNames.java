@@ -1,29 +1,59 @@
 package com.starmediadev.plugins.starmcutils.util;
 
-import com.starmediadev.utils.Utils;
 import com.starmediadev.utils.helper.StringHelper;
 import org.bukkit.entity.EntityType;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A utility to map the entitytype enum to formatted names
+ */
 public class EntityNames {
-    public static Map<EntityType, String> entityNames = new HashMap<>();
-    //These are used for instantiation, which is needed for the setting of the names.
-    private static EntityNames instance = new EntityNames();
+    public Map<EntityType, String> entityNames = new HashMap<>();
+    private static final EntityNames instance = new EntityNames() {
+        @Override
+        public void setName(EntityType entityType, String name) {
+            throw new RuntimeException("Cannot set the entity name using the default instance");
+        }
+    };
+    
+    /**
+     * Creates a custom instance of this class that can be used to set custom names
+     * @return A custom instance of this class
+     */
+    public static EntityNames createInstance() {
+        return new EntityNames();
+    }
+    
+    /**
+     * Gets the global instance of this class. This instance cannot have any names changed.
+     * @return The global instance
+     */
+    public static EntityNames getInstance() {
+        return instance;
+    }
 
     private EntityNames() {
         for (EntityType entityType : EntityType.values()) {
             entityNames.put(entityType, StringHelper.capitalizeEveryWord(entityType.name()));
         }
-
-        //This is where custom names can be set.
     }
-    public static String getName(EntityType entityType) {
+    
+    /**
+     * Gets the default instance of the entity name
+     * @param entityType The entity type
+     * @return The name using the default instance. This is just a wrapper method
+     */
+    public static String getDefaultName(EntityType entityType) {
+        return getInstance().getName(entityType);
+    }
+    
+    public String getName(EntityType entityType) {
         return entityNames.get(entityType);
     }
-
-    private EntityNames getInstance() {
-        return instance;
+    
+    public void setName(EntityType entityType, String name) {
+        entityNames.put(entityType, name);
     }
 }

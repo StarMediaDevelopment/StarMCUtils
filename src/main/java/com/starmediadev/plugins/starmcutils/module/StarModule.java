@@ -10,6 +10,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents a module.
+ * This is for shared code as some of the other projects will use this class. 
+ * @param <P>
+ */
 public abstract class StarModule<P extends JavaPlugin> {
     protected P plugin;
     protected String name;

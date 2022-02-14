@@ -2,6 +2,11 @@ package com.starmediadev.plugins.starmcutils.updater;
 
 import com.starmediadev.plugins.starmcutils.StarMCUtils;
 
+/**
+ * Part of the Updater feature. This is the main class that handles it
+ * The Updater sends a Bukkit event based on a certain amount of time based on the UpdateType enum
+ * An example is tracking playtime based on this system
+ */
 public class Updater implements Runnable {
     
     private StarMCUtils plugin;

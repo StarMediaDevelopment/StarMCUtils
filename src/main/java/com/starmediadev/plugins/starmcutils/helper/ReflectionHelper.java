@@ -5,6 +5,9 @@ import org.bukkit.Bukkit;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A reflection helper for Minecraft based reflection
+ */
 public final class ReflectionHelper {
     private ReflectionHelper() {}
     
@@ -16,10 +19,24 @@ public final class ReflectionHelper {
         craftBukkitBasePackage = "org.bukkit.craftbukkit." + minecraftVersion;
     }
     
+    /**
+     * Gets the net.minecraft.server class. This is based on the official Mojang Mappings
+     * @param packageName The sub package of the class
+     * @param className The name of the class
+     * @return The class
+     * @throws ClassNotFoundException If the class is invalid
+     */
     public static Class<?> getNMSClass(String packageName, String className) throws ClassNotFoundException {
         return getClass(packageName, className, nmsBasePackage);
     }
     
+    /**
+     * Gets the craftbukkit class
+     * @param packageName The sub package of the class
+     * @param className The name of the class
+     * @return The class
+     * @throws ClassNotFoundException If the class is invalid
+     */
     public static Class<?> getCraftBukkitClass(String packageName, String className) throws ClassNotFoundException {
         return getClass(packageName, className, craftBukkitBasePackage);
     }

@@ -6,6 +6,9 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * A utility to save strings to NBT on Items
+ */
 public final class NBTWrapper {
     
     private static Class<?> stringTagClass, craftItemStackClass, nmsItemStackClass, compoundTagClass;

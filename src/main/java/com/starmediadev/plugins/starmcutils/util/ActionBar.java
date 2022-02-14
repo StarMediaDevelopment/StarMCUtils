@@ -4,18 +4,18 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
-public class ActionBar {
-
-    private String message;
-
+/**
+ * This class is meant to represent an ActionBar. You really only need to create one instance per actionbar and just use the send method
+ */
+public record ActionBar(String message) {
     public ActionBar(String message) {
-        setText(message);
+        this.message = MCUtils.color(message);
     }
-
-    public void setText(String text) {
-        message = MCUtils.color(text);
-    }
-
+    
+    /**
+     * Sends this ActionBar to a player
+     * @param player The player to send it to.
+     */
     public void send(Player player) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
     }

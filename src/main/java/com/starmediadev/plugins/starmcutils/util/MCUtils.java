@@ -1,5 +1,6 @@
 package com.starmediadev.plugins.starmcutils.util;
 
+import com.starmediadev.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,6 +12,9 @@ import org.bukkit.entity.Player;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A collection of utilities. Some of these will eventually be moved to their own classes at some point
+ */
 public final class MCUtils {
     
     public static final Map<String, Integer> nameToTicks = new LinkedHashMap<>();
@@ -44,6 +48,11 @@ public final class MCUtils {
         nameToTicks.put("midnight", 18000);
     }
     
+    /**
+     * Colors text using Spigot's Chat color
+     * @param uncolored The uncolored text
+     * @return The colored text
+     */
     public static String color(String uncolored) {
         String text = ChatColor.translateAlternateColorCodes('&', uncolored);
         StringBuilder colored = new StringBuilder();
@@ -71,18 +80,47 @@ public final class MCUtils {
         return colored.toString();
     }
     
+    /**
+     * Sends a message to the sender in gray and italics. Useful for debugging things
+     * @param sender The sender to send the message to
+     * @param message The message to send
+     */
     public static void debugSender(CommandSender sender, String message) {
         sender.sendMessage(MCUtils.color("&7&o" + message));
     }
     
+    /**
+     * Converts a Bukkit Location to a Position
+     * Please use Postion.fromLocation() static method
+     * @param location The location
+     * @return The position
+     */
+    @Deprecated
     public static Position locationToPosition(Location location) {
+        Bukkit.getConsoleSender().sendMessage(MCUtils.color("&cThere is use of the deprecated Position API from StarMCUtils. Please review the stack trace to find the plugin"));
+        Utils.printCurrentStack();
         return new Position(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
     }
     
+    /**
+     * Converts a Position to a Location
+     * Please use Position.toLocation() instance method
+     * @param world The world for this location
+     * @param position The position
+     * @return The Bukkit Location
+     */
+    @Deprecated
     public static Location positionToLocation(World world, Position position) {
+        Bukkit.getConsoleSender().sendMessage(MCUtils.color("&cThere is use of the deprecated Position API from StarMCUtils. Please review the stack trace to find the plugin"));
+        Utils.printCurrentStack();
         return new Location(world, position.getX(), position.getY(), position.getZ(), position.getYaw(), position.getPitch());
     }
     
+    /**
+     * Converts the world time into the human readable 24hr format
+     * @param world The world
+     * @return The formatted time
+     */
     public static String getWorldTimeAs24Hr(World world) {
         long[] worldTimeBreakdown = getWorldTimeBreakdown(world);
         long totalHours = worldTimeBreakdown[1];
@@ -93,6 +131,11 @@ public final class MCUtils {
         return hours + ":" + minutes + ":" + seconds;
     }
     
+    /**
+     * Converts the world time into the human readable 12hr format
+     * @param world The world
+     * @return The formatted time
+     */
     public static String getWorldTimeAs12Hr(World world) {
         long[] worldTimeBreakdown = getWorldTimeBreakdown(world);
         long totalHours = worldTimeBreakdown[1];
@@ -139,6 +182,14 @@ public final class MCUtils {
         }
     }
     
+    /**
+     * Gets a world based on the CommandSender
+     * If it is the console, it gets the main world
+     * If it is a player, then it gets the player's current world
+     * Other senders return null
+     * @param sender The command sender
+     * @return The world
+     */
     public static World getWorld(CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) {
             return Bukkit.getWorld(ServerProperties.getLevelName());

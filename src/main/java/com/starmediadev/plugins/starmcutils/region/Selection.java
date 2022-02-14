@@ -3,6 +3,9 @@ package com.starmediadev.plugins.starmcutils.region;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+/**
+ * This represents a player selection
+ */
 public class Selection {
 
     private World world;

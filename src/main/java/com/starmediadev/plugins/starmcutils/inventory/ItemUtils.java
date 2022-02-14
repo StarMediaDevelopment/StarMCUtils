@@ -14,6 +14,9 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Some utilities for saving Items as Strings
+ */
 public class ItemUtils {
     
     private static Class<?> compoundTagClass, tagParserClass, craftItemStackClass, nmsItemStackClass;
