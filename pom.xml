@@ -76,7 +76,7 @@
             <url>https://libraries.minecraft.net/</url>
         </repository>
         <repository>
-            <id>github</id>
+            <id>smd-repo</id>
             <name>Star Media Development LLC Maven</name>
             <url>https://maven.pkg.github.com/starmediadevelopment/maven</url>
         </repository>
@@ -105,7 +105,7 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
+            <id>smd-repo</id>
             <name>Star Media Development LLC Maven</name>
             <url>https://maven.pkg.github.com/starmediadevelopment/maven</url>
         </repository>
