@@ -1,5 +1,7 @@
 package com.starmediadev.plugins.starmcutils.util;
 
+import com.starmediadev.utils.helper.FileHelper;
+import com.starmediadev.utils.helper.StringHelper;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,10 +18,16 @@ public class Config {
     private YamlConfiguration yamlConfiguration;
     
     private JavaPlugin plugin;
-    private String name;
+    private String name, modulesFolder = "";
     
     public Config(JavaPlugin plugin, String name) {
         this.plugin = plugin;
+        this.name = name;
+    }
+    
+    public Config(JavaPlugin plugin, String modulesFolder, String name) {
+        this.plugin = plugin;
+        this.modulesFolder = modulesFolder;
         this.name = name;
     }
     
@@ -37,17 +45,12 @@ public class Config {
      * Sets up this config
      */
     public void setup() {
-        this.file = new File(plugin.getDataFolder(), name);
-        Path filePath = file.toPath();
-        if (Files.notExists(filePath)) {
-            try {
-                Files.createFile(filePath);
-            } catch (IOException e) {
-                plugin.getLogger().severe("Could not create " + name + ": " + e.getMessage());
-                return;
-            }
+        if (StringHelper.isEmpty(modulesFolder)) {
+            this.file = new File(plugin.getDataFolder(), name);
+        } else {
+            this.file = Path.of(plugin.getDataFolder().toPath().toString(), modulesFolder, name).toFile();
         }
-        
+        FileHelper.createFileIfNotExists(file.toPath());
         yamlConfiguration = YamlConfiguration.loadConfiguration(file);
     }
     

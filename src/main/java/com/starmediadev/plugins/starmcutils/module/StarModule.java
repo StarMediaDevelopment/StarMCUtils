@@ -17,13 +17,20 @@ import java.util.Set;
  */
 public abstract class StarModule<P extends JavaPlugin> {
     protected P plugin;
-    protected String name;
+    protected String name, modulesFolder = "";
     protected boolean enabled = true;
     protected Config config;
     
     protected Map<String, CommandExecutor> commands = new HashMap<>();
     protected Set<Listener> listeners = new HashSet<>();
     protected Map<String, Object> defaultConfigValues = new HashMap<>();
+    
+    public StarModule(P plugin, String modulesFolder, String name) {
+        this.plugin = plugin;
+        this.name = name;
+        this.modulesFolder = modulesFolder;
+        config = new Config(plugin, name.toLowerCase() + ".yml");
+    }
     
     public StarModule(P plugin, String name) {
         this.plugin = plugin;
@@ -63,8 +70,11 @@ public abstract class StarModule<P extends JavaPlugin> {
     }
     
     private void saveDefaultValues() {
+        this.defaultConfigValues.put("settings.enabled", true);
         this.defaultConfigValues.forEach((key, value) -> {
-            config.getConfiguration().set(key, value);
+            if (!config.getConfiguration().contains(key)) {
+                config.getConfiguration().set(key, value);
+            }
         });
     }
     
