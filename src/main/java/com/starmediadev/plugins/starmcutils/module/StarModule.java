@@ -76,6 +76,7 @@ public abstract class StarModule<P extends JavaPlugin> {
                 config.getConfiguration().set(key, value);
             }
         });
+        config.save();
     }
     
     public final String getName() {
