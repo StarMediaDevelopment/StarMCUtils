@@ -2,14 +2,16 @@ package com.starmediadev.plugins.starmcutils.util;
 
 import net.md_5.bungee.api.ChatColor;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * A collection of color utilities to support adding custom color codes that can be used.
  * Developers must use MCUtils.color() method in order for custom color codes to be respected within this API
  */
 public final class ColorUtils {
-    public static List<Character> colorChars = new ArrayList<>(Collections.singleton('&'));
+    private static List<Character> colorChars = new ArrayList<>(Collections.singleton('&'));
     private static Map<String, ChatColor> colors = new HashMap<>();
     
     /**
@@ -36,6 +38,10 @@ public final class ColorUtils {
         }
     }
     
+    public static void addCustomColor(String code, ChatColor color) {
+        colors.put(code, color);
+    }
+    
     /**
      * Gets the ChatColor representation of a code
      * @param code the code
@@ -60,5 +66,13 @@ public final class ColorUtils {
      */
     public static boolean validColorChar(char c) {
         return colorChars.contains(c);
+    }
+    
+    public static List<Character> getColorChars() {
+        return new ArrayList<>(colorChars);
+    }
+    
+    public static Map<String, ChatColor> getColors() {
+        return new HashMap<>(colors);
     }
 }

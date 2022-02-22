@@ -39,7 +39,6 @@ public record AddColorCmd(StarMCUtils plugin) implements CommandExecutor {
         
         ColorUtils.addCustomColor(code, hexColor);
         sender.sendMessage(MCUtils.color("&eYou added a color with code &b") + code + MCUtils.color(" &eand hex value &b") + hexColor);
-        //sender.sendMessage(MCUtils.color("&eYou add a color with code &b" + code + " &eand hex value &b" + hexColor));
         return true;
     }
 }
