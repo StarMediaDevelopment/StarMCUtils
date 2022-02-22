@@ -2,7 +2,7 @@ name: ${project.name}
 description: ${project.description}
 main: com.starmediadev.plugins.starmcutils.StarMCUtils
 version: ${project.version}
-api-version: 1.16
+api-version: 1.18
 softdepend: [StarData]
 libraries:
   - com.google.code.gson:gson:2.8.7
