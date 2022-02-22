@@ -9,7 +9,7 @@ import java.util.*;
  * Developers must use MCUtils.color() method in order for custom color codes to be respected within this API
  */
 public final class ColorUtils {
-    private static List<Character> colorChars = new ArrayList<>(Collections.singleton('&'));
+    public static List<Character> colorChars = new ArrayList<>(Collections.singleton('&'));
     private static Map<String, ChatColor> colors = new HashMap<>();
     
     /**

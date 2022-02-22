@@ -1,5 +1,6 @@
 package com.starmediadev.plugins.starmcutils;
 
+import com.starmediadev.plugins.starmcutils.cmds.AddColorCmd;
 import com.starmediadev.plugins.starmcutils.region.SelectionManager;
 import com.starmediadev.plugins.starmcutils.skin.SkinManager;
 import com.starmediadev.plugins.starmcutils.updater.Updater;
@@ -25,6 +26,7 @@ public class StarMCUtils extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(SelectionManager.class, selectionManager, this, ServicePriority.Highest);
         Bukkit.getServicesManager().register(SkinManager.class, skinManager, this, ServicePriority.Highest);
+        getCommand("addcolor").setExecutor(new AddColorCmd(this));
     }
     
     @EventHandler
