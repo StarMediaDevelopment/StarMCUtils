@@ -1,6 +1,6 @@
 package com.starmediadev.plugins.starmcutils;
 
-import com.starmediadev.plugins.starmcutils.cmds.AddColorCmd;
+import com.starmediadev.plugins.starmcutils.cmds.CustomColorCmds;
 import com.starmediadev.plugins.starmcutils.region.SelectionManager;
 import com.starmediadev.plugins.starmcutils.skin.SkinManager;
 import com.starmediadev.plugins.starmcutils.updater.Updater;
@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.awt.*;
 import java.util.List;
@@ -30,22 +31,23 @@ public class StarMCUtils extends JavaPlugin implements Listener {
     private SkinManager skinManager = new SkinManager();
     
     private Config colorsConfig;
-
+    
     public void onEnable() {
+        BukkitCommandHandler commandHandler = BukkitCommandHandler.create(this);
+        
         Updater updater = new Updater(this);
         getServer().getScheduler().runTaskTimer(this, updater, 1L, 1L);
         getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(SelectionManager.class, selectionManager, this, ServicePriority.Highest);
         Bukkit.getServicesManager().register(SkinManager.class, skinManager, this, ServicePriority.Highest);
-        getCommand("addcolor").setExecutor(new AddColorCmd(this));
         
         colorsConfig = new Config(this, "colors.yml");
         colorsConfig.setup();
-    
+        
         YamlConfiguration config = colorsConfig.getConfiguration();
         List<Character> chars = config.getCharacterList("chars");
         chars.forEach(ColorUtils::addColorChar);
-    
+        
         ConfigurationSection colorsSection = config.getConfigurationSection("colors");
         if (colorsSection != null) {
             colorsSection.getKeys(false).forEach(code -> {
@@ -57,6 +59,9 @@ public class StarMCUtils extends JavaPlugin implements Listener {
                 ColorUtils.addCustomColor(code, chatcolor);
             });
         }
+        
+        commandHandler.register(new CustomColorCmds(this));
+        commandHandler.registerBrigadier();
     }
     
     @Override
