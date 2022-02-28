@@ -101,17 +101,17 @@
     
     <repositories>
         <repository>
+            <id>starmediadev-maven</id>
+            <name>Star Media Development LLC Maven</name>
+            <url>https://repo.starmediadev.com/snapshots</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
-        </repository>
-        <repository>
-            <id>smd-repo</id>
-            <name>Star Media Development LLC Maven</name>
-            <url>https://maven.pkg.github.com/starmediadevelopment/maven</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -152,9 +152,9 @@
 
     <distributionManagement>
         <repository>
-            <id>smd-repo</id>
+            <id>starmediadev-maven</id>
             <name>Star Media Development LLC Maven</name>
-            <url>https://maven.pkg.github.com/starmediadevelopment/maven</url>
+            <url>https://repo.starmediadev.com/snapshots</url>
         </repository>
     </distributionManagement>
 </project>
