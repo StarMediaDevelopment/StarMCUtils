@@ -4,6 +4,7 @@ import com.starmediadev.plugins.starmcutils.util.Config;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,10 +40,18 @@ public abstract class StarModule<P extends JavaPlugin> {
     }
     
     public final void init() {
+        init(null);
+    }
+    
+    public final void init(BukkitCommandHandler commandHandler) {
         config.setup();
         registerDefaultConfigValues();
         saveDefaultValues();
         loadValuesFromConfig();
+        if (commandHandler != null) {
+            registerLampDependencies(commandHandler);
+            registerLampCommands(commandHandler);
+        }
         createCommandExecutors();
         createEventListeners();
     }
@@ -56,6 +65,12 @@ public abstract class StarModule<P extends JavaPlugin> {
     }
     
     protected void createCommandExecutors() {
+        
+    }
+    protected void registerLampCommands(BukkitCommandHandler commandHandler) {
+        
+    }
+    protected void registerLampDependencies(BukkitCommandHandler commandHandler) {
         
     }
     protected void createEventListeners() {
