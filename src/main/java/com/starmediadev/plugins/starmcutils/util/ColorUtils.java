@@ -2,9 +2,7 @@ package com.starmediadev.plugins.starmcutils.util;
 
 import net.md_5.bungee.api.ChatColor;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * A collection of color utilities to support adding custom color codes that can be used.
