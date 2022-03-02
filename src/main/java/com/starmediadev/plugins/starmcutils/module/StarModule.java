@@ -4,6 +4,7 @@ import com.starmediadev.plugins.starmcutils.util.Config;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import revxrsal.commands.autocomplete.AutoCompleter;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.util.HashMap;
@@ -71,6 +72,9 @@ public abstract class StarModule<P extends JavaPlugin> {
         
     }
     protected void registerLampDependencies(BukkitCommandHandler commandHandler) {
+        
+    }
+    protected void registerLampSuggestions(AutoCompleter autoCompleter) {
         
     }
     protected void createEventListeners() {
