@@ -31,7 +31,7 @@ public abstract class StarModule<P extends JavaPlugin> {
         this.plugin = plugin;
         this.name = name;
         this.modulesFolder = modulesFolder;
-        config = new Config(plugin, name.toLowerCase() + ".yml");
+        config = new Config(plugin, modulesFolder, name.toLowerCase() + ".yml");
     }
     
     public StarModule(P plugin, String name) {
@@ -92,8 +92,8 @@ public abstract class StarModule<P extends JavaPlugin> {
     private void saveDefaultValues() {
         this.defaultConfigValues.put("settings.enabled", true);
         this.defaultConfigValues.forEach((key, value) -> {
-            if (!config.getConfiguration().contains(key)) {
-                config.getConfiguration().set(key, value);
+            if (!config.contains(key)) {
+                config.set(key, value);
             }
         });
         config.save();

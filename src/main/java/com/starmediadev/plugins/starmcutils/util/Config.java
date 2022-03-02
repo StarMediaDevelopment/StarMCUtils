@@ -27,7 +27,7 @@ public class Config {
     private YamlConfiguration yamlConfiguration;
     
     private JavaPlugin plugin;
-    private String name, modulesFolder = "";
+    private String name, folder = "";
     
     private Map<String, Object> defaultValues = new HashMap<>();
     
@@ -36,9 +36,9 @@ public class Config {
         this.name = name;
     }
     
-    public Config(JavaPlugin plugin, String modulesFolder, String name) {
+    public Config(JavaPlugin plugin, String folder, String name) {
         this.plugin = plugin;
-        this.modulesFolder = modulesFolder;
+        this.folder = folder;
         this.name = name;
     }
     
@@ -235,10 +235,10 @@ public class Config {
      * Sets up this config
      */
     public void setup() {
-        if (StringHelper.isEmpty(modulesFolder)) {
+        if (StringHelper.isEmpty(folder)) {
             this.file = new File(plugin.getDataFolder(), name);
         } else {
-            this.file = Path.of(plugin.getDataFolder().toPath().toString(), modulesFolder, name).toFile();
+            this.file = Path.of(plugin.getDataFolder().toPath().toString(), folder, name).toFile();
         }
         FileHelper.createFileIfNotExists(file.toPath());
         yamlConfiguration = YamlConfiguration.loadConfiguration(file);
