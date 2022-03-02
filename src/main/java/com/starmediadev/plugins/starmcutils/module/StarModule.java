@@ -51,8 +51,8 @@ public abstract class StarModule<P extends JavaPlugin> {
         loadValuesFromConfig();
         if (commandHandler != null) {
             registerLampDependencies(commandHandler);
-            registerLampCommands(commandHandler);
             registerLampSuggestions(commandHandler.getAutoCompleter());
+            registerLampCommands(commandHandler);
         }
         createCommandExecutors();
         createEventListeners();
