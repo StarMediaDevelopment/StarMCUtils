@@ -3,6 +3,7 @@ package com.starmediadev.plugins.starmcutils.util;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * A collection of color utilities to support adding custom color codes that can be used.
@@ -11,6 +12,9 @@ import java.util.*;
 public final class ColorUtils {
     private static List<Character> colorChars = new ArrayList<>(Collections.singleton('&'));
     private static Map<String, ChatColor> colors = new HashMap<>();
+    
+    public static final Pattern STRIP_COLOR_PATTERN_CODE = Pattern.compile("(?i)[§&~`!@$%^*?][0-9A-Z]", Pattern.CASE_INSENSITIVE);
+    public static final Pattern STRIP_COLOR_PATTERN_HEX = Pattern.compile("(?i)#[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]", Pattern.CASE_INSENSITIVE);
     
     /**
      * Adds a custom color
@@ -72,5 +76,10 @@ public final class ColorUtils {
     
     public static Map<String, ChatColor> getColors() {
         return new HashMap<>(colors);
+    }
+    
+    public static String stripColor(String text) {
+        text = STRIP_COLOR_PATTERN_HEX.matcher(text).replaceAll("");
+        return STRIP_COLOR_PATTERN_CODE.matcher(text).replaceAll("");
     }
 }
