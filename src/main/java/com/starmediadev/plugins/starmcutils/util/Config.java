@@ -254,4 +254,8 @@ public class Config {
             plugin.getLogger().severe("Could not save " + name);
         }
     }
+    
+    public void reload() {
+        setup();
+    }
 }
