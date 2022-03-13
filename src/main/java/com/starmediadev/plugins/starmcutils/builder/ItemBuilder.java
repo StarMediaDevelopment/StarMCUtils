@@ -1,21 +1,17 @@
 package com.starmediadev.plugins.starmcutils.builder;
 
-import com.mojang.authlib.GameProfile;
-import com.starmediadev.plugins.starmcutils.skin.Skin;
 import com.starmediadev.plugins.starmcutils.util.MCUtils;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class ItemBuilder {
@@ -24,7 +20,6 @@ public class ItemBuilder {
     private Map<Enchantment, Integer> enchantments = new HashMap<>(), storedEnchantments = new HashMap<>();
     private Set<ItemFlag> itemFlags = new HashSet<>();
     private boolean unbreakable;
-    private DyeColor bannerColor;
     private List<Pattern> bannerPatterns = new ArrayList<>();
     private BlockState blockState;
     private String bookTitle, bookAuthor;
@@ -34,13 +29,30 @@ public class ItemBuilder {
     private List<PotionEffect> potionEffects = new ArrayList<>();
     private int repairCost = -1;
     private UUID skullOwner;
-    private Skin skullSkin;
     private int amount = 1, durability;
     private Material material;
-    private short damage;
+    
+    public ItemBuilder(Material material) {
+        this.material = material;
+    }
+    
+    public ItemBuilder() {}
+    
+    public ItemBuilder(Material material, int amount) {
+        this.material = material;
+        this.amount = amount;
+    }
+    
+    public static ItemBuilder start(Material material) {
+        return new ItemBuilder(material);
+    }
+    
+    public static ItemBuilder start(Material material, int amount) {
+        return new ItemBuilder(material, amount);
+    }
     
     public ItemStack build() {
-        ItemStack itemStack = new ItemStack(material, amount, damage);
+        ItemStack itemStack = new ItemStack(material, amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (displayName != null) {
             itemMeta.setDisplayName(MCUtils.color(displayName));
@@ -67,9 +79,10 @@ public class ItemBuilder {
         }
         
         itemMeta.setUnbreakable(unbreakable);
-    
+        
         if (itemMeta instanceof BannerMeta bannerMeta) {
-            if (bannerColor != null) bannerMeta.setBaseColor(bannerColor);
+//            if (bannerColor != null)
+//                bannerMeta.setBaseColor(bannerColor);
             bannerMeta.setPatterns(bannerPatterns);
         }
         
@@ -78,6 +91,10 @@ public class ItemBuilder {
                 BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
                 blockStateMeta.setBlockState(blockState);
             }
+        }
+        
+        if (itemMeta instanceof Damageable damageable) {
+            damageable.setDamage(durability);
         }
         
         if (itemMeta instanceof BookMeta bookMeta) {
@@ -95,7 +112,7 @@ public class ItemBuilder {
         
         if (itemMeta instanceof LeatherArmorMeta) {
             if (armorColor != null) {
-                LeatherArmorMeta leatherArmorMeta =  (LeatherArmorMeta) itemMeta;
+                LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
                 leatherArmorMeta.setColor(armorColor);
             }
         }
@@ -103,7 +120,7 @@ public class ItemBuilder {
         if (itemMeta instanceof PotionMeta) {
             if (mainEffect != null) {
                 PotionMeta potionMeta = (PotionMeta) itemMeta;
-                potionMeta.setMainEffect(mainEffect);
+                potionMeta.setBasePotionData(new PotionData(null)); //TODO
                 if (!potionEffects.isEmpty()) {
                     potionEffects.forEach(potionEffect -> potionMeta.addCustomEffect(potionEffect, true));
                 }
@@ -120,50 +137,10 @@ public class ItemBuilder {
         if (itemMeta instanceof SkullMeta) {
             if (this.skullOwner != null) {
                 SkullMeta skullMeta = (SkullMeta) itemMeta;
-                String skullOwner = null;
-//                User user = CenturionsCore.getInstance().getUserManager().getUser(this.skullOwner);
-//                if (user != null) {
-//                    skullOwner = user.getName();
-//                } else {
-//                    skullOwner = CenturionsUtils.getNameFromUUID(this.skullOwner);
-//                }
-    
-                if (skullOwner != null) {
-                    skullMeta.setOwner(skullOwner);
-        
-                    
-                }
-    
-                GameProfile mcProfile = null;
-    
-//                if (this.skullSkin != null) {
-//                    mcProfile = SpigotUtils.skinToProfile(skullSkin);
-//                } else {
-//                    Player player = Bukkit.getPlayer(this.skullOwner);
-//                    if (player != null) {
-//                        mcProfile = ((CraftPlayer) player).getProfile();
-//                    } else {
-//                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(this.skullOwner);
-//                        if (offlinePlayer != null) {
-//                            mcProfile = ((CraftOfflinePlayer) offlinePlayer).getProfile();
-//                            if (mcProfile == null) {
-//                                List<IRecord> records = CenturionsCore.getInstance().getDatabase().getRecords(SkinRecord.class, "uuid", this.skullOwner.toString());
-//                                for (IRecord record : records) {
-//                                    if (record instanceof SkinRecord) {
-//                                        mcProfile = SpigotUtils.skinToProfile(((SkinRecord) record).toObject());
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-                
-                if (mcProfile != null) {
-                    try {
-                        Field field = skullMeta.getClass().getDeclaredField("profile");
-                        field.setAccessible(true);
-                        field.set(skullMeta, mcProfile);
-                    } catch (Exception e) {}
+                OfflinePlayer skullPlayer = Bukkit.getOfflinePlayer(this.skullOwner);
+                if (skullPlayer != null) {
+                    skullMeta.setOwnerProfile(skullPlayer.getPlayerProfile());
+                    skullMeta.setOwningPlayer(skullPlayer);
                 }
             }
         }
@@ -172,43 +149,9 @@ public class ItemBuilder {
         return itemStack;
     }
     
-    public ItemBuilder(Material material) {
-        this.material = material;
-    }
-    
-    public ItemBuilder(Material material, int amount) {
-        this.material = material;
-        this.amount = amount;
-    }
-    
-    public ItemBuilder(Material material, int amount, short data) {
-        this.material = material;
-        this.amount = amount;
-        this.damage = data;
-    }
-    
     public ItemBuilder setMaterial(Material material) {
         this.material = material;
         return this;
-    }
-    
-    
-    
-    public ItemBuilder setDamage(short damage) {
-        this.damage = damage;
-        return this;
-    }
-    
-    public static ItemBuilder start(Material material) {
-        return new ItemBuilder(material);
-    }
-    
-    public static ItemBuilder start(Material material, int amount) {
-        return new ItemBuilder(material, amount);
-    }
-    
-    public static ItemBuilder start(Material material, int amount, short data) {
-        return new ItemBuilder(material, amount, data);
     }
     
     public ItemBuilder setDisplayName(String displayName) {
@@ -258,11 +201,6 @@ public class ItemBuilder {
     
     public ItemBuilder setUnbreakable(boolean unbreakable) {
         this.unbreakable = unbreakable;
-        return this;
-    }
-    
-    public ItemBuilder setBannerColor(DyeColor bannerColor) {
-        this.bannerColor = bannerColor;
         return this;
     }
     
@@ -318,11 +256,6 @@ public class ItemBuilder {
     
     public ItemBuilder setSkullOwner(UUID skullOwner) {
         this.skullOwner = skullOwner;
-        return this;
-    }
-    
-    public ItemBuilder setSkullSkin(Skin skullSkin) {
-        this.skullSkin = skullSkin;
         return this;
     }
     
