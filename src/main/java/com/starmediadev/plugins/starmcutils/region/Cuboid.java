@@ -19,12 +19,20 @@ public class Cuboid {
     protected World world;
     protected int xMin, yMin, zMin, xMax, yMax, zMax;
     protected double xMinCentered, yMinCentered, zMinCentered, xMaxCentered, yMaxCentered, zMaxCentered;
+    
+    private static List<Cuboid> registry = new ArrayList<>();
 
     public Cuboid(Location pos1, Location pos2) {
         setBounds(pos1, pos2);
+        registry.add(this);
     }
 
     public Cuboid() {
+        registry.add(this);
+    }
+    
+    public static List<Cuboid> getRegistry() {
+        return registry;
     }
     
     /**
