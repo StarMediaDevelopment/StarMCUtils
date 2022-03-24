@@ -1,6 +1,7 @@
 package com.starmediadev.plugins.starmcutils.workload;
 
 import com.google.common.collect.Queues;
+import com.starmediadev.nmswrapper.NMS;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -8,11 +9,12 @@ import java.util.ArrayDeque;
 
 public class WorkloadThread extends BukkitRunnable {
     
-    private static final int MAX_MS_PER_TICK = 10;
     private final ArrayDeque<Workload> workloadDeque;
+    private NMS nms;
     
-    public WorkloadThread() {
+    public WorkloadThread(NMS nms) {
         workloadDeque = Queues.newArrayDeque();
+        this.nms = nms;
     }
     
     public void addWorkload(Workload workload) {
@@ -21,8 +23,8 @@ public class WorkloadThread extends BukkitRunnable {
     
     @Override
     public void run() {
-        long stopTime = System.currentTimeMillis() + MAX_MS_PER_TICK;
-        while (!workloadDeque.isEmpty() && System.currentTimeMillis() <= stopTime) {
+        float averageTickTime = nms.getAverageTickTime();
+        while (!workloadDeque.isEmpty() && averageTickTime < 35) {
             workloadDeque.poll().compute();
         }
     }

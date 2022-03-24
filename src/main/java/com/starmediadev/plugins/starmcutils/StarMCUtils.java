@@ -1,5 +1,7 @@
 package com.starmediadev.plugins.starmcutils;
 
+import com.starmediadev.nmswrapper.NMS;
+import com.starmediadev.nmswrapper.NMS.Version;
 import com.starmediadev.plugins.starmcutils.cmds.CustomColorCmds;
 import com.starmediadev.plugins.starmcutils.region.SelectionManager;
 import com.starmediadev.plugins.starmcutils.skin.SkinManager;
@@ -19,8 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This utility for Spigot runs as a plugin and provides Bukkit Services for the relevent utilities
@@ -32,7 +34,10 @@ public class StarMCUtils extends JavaPlugin implements Listener {
     
     private Config colorsConfig;
     
+    private NMS nms;
+    
     public void onEnable() {
+        nms = NMS.getNMS(Version.MC_1_18_R2);
         BukkitCommandHandler commandHandler = BukkitCommandHandler.create(this);
         
         Updater updater = new Updater(this);
@@ -82,5 +87,9 @@ public class StarMCUtils extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         e.setFormat(MCUtils.color("&f" + e.getPlayer().getName() + "&8: &f" + e.getMessage()));
+    }
+    
+    public NMS getNMS() {
+        return this.nms;
     }
 }
