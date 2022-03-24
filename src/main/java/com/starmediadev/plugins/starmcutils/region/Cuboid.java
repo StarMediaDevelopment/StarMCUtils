@@ -15,39 +15,30 @@ import java.util.*;
  */
 public class Cuboid {
     
-    protected String worldName;
+    protected final String worldName;
     protected World world;
-    protected int xMin, yMin, zMin, xMax, yMax, zMax;
-    protected double xMinCentered, yMinCentered, zMinCentered, xMaxCentered, yMaxCentered, zMaxCentered;
+    protected final int xMin, yMin, zMin, xMax, yMax, zMax;
+    protected final double xMinCentered, yMinCentered, zMinCentered, xMaxCentered, yMaxCentered, zMaxCentered;
     
     public Cuboid(Location pos1, Location pos2) {
-        setBounds(pos1, pos2);
+        this(pos1.getWorld().getName(), Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(), pos2.getBlockY()), Math.min(pos1.getBlockZ(), pos2.getBlockZ()), 
+                Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(), pos2.getBlockY()), Math.max(pos1.getBlockZ(), pos2.getBlockZ()));
     }
     
-    /**
-     * Sets the bounds of this cuboid
-     * It does nto matter on the order, this method will detect which one is the min and which one is the max
-     *
-     * @param pos1 The first position
-     * @param pos2 The second position
-     */
-    public void setBounds(Location pos1, Location pos2) {
-        this.worldName = pos1.getWorld().getName();
-        this.xMin = Math.min(pos1.getBlockX(), pos2.getBlockX());
-        this.yMin = Math.min(pos1.getBlockY(), pos2.getBlockY());
-        this.zMin = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
-        this.xMax = Math.max(pos1.getBlockX(), pos2.getBlockX());
-        this.yMax = Math.max(pos1.getBlockY(), pos2.getBlockY());
-        this.zMax = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+    public Cuboid(String worldName, int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
+        this.worldName = worldName;
+        this.xMin = xMin;
+        this.yMin = yMin;
+        this.zMin = zMin;
+        this.xMax = xMax;
+        this.yMax = yMax;
+        this.zMax = zMax;
         this.xMinCentered = this.xMin + 0.5;
         this.xMaxCentered = this.xMax + 0.5;
         this.yMinCentered = this.yMin + 0.5;
         this.yMaxCentered = this.yMax + 0.5;
         this.zMinCentered = this.zMin + 0.5;
         this.zMaxCentered = this.zMax + 0.5;
-    }
-    
-    public Cuboid() {
     }
     
     /**
@@ -268,6 +259,4 @@ public class Cuboid {
         Cuboid cuboid = (Cuboid) o;
         return xMin == cuboid.xMin && yMin == cuboid.yMin && zMin == cuboid.zMin && xMax == cuboid.xMax && yMax == cuboid.yMax && zMax == cuboid.zMax;
     }
-    
-    
 }
