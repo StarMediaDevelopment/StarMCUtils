@@ -15,14 +15,25 @@ import java.util.*;
  */
 public class Cuboid {
     
-    protected final String worldName;
+    protected String worldName;
     protected World world;
-    protected final int xMin, yMin, zMin, xMax, yMax, zMax;
-    protected final double xMinCentered, yMinCentered, zMinCentered, xMaxCentered, yMaxCentered, zMaxCentered;
+    protected int xMin, yMin, zMin, xMax, yMax, zMax;
+    protected double xMinCentered, yMinCentered, zMinCentered, xMaxCentered, yMaxCentered, zMaxCentered;
     
     public Cuboid(Location pos1, Location pos2) {
-        this(pos1.getWorld().getName(), Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(), pos2.getBlockY()), Math.min(pos1.getBlockZ(), pos2.getBlockZ()), 
-                Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(), pos2.getBlockY()), Math.max(pos1.getBlockZ(), pos2.getBlockZ()));
+        if (!pos1.getWorld().getName().equalsIgnoreCase(pos2.getWorld().getName())) {
+            throw new IllegalArgumentException("Could not construct a cuboid in different worlds.");
+        }
+        
+        this.worldName = pos1.getWorld().getName();
+        this.world = pos1.getWorld();
+        this.xMin = Math.min(pos1.getBlockX(), pos2.getBlockX());
+        this.yMin = Math.min(pos1.getBlockY(), pos2.getBlockY());
+        this.zMin = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+        this.xMax = Math.max(pos1.getBlockX(), pos2.getBlockZ());
+        this.yMax = Math.max(pos1.getBlockY(), pos2.getBlockY());
+        this.zMax = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+        calculateCenters();
     }
     
     public Cuboid(String worldName, int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
@@ -33,12 +44,124 @@ public class Cuboid {
         this.xMax = xMax;
         this.yMax = yMax;
         this.zMax = zMax;
+        calculateCenters();
+    }
+    
+    protected final void calculateCenters() {
         this.xMinCentered = this.xMin + 0.5;
         this.xMaxCentered = this.xMax + 0.5;
         this.yMinCentered = this.yMin + 0.5;
         this.yMaxCentered = this.yMax + 0.5;
         this.zMinCentered = this.zMin + 0.5;
         this.zMaxCentered = this.zMax + 0.5;
+    }
+    
+    protected void setBounds(Location pos1, Location pos2) {
+        this.worldName = pos1.getWorld().getName();
+        this.world = pos1.getWorld();
+        this.xMin = Math.min(pos1.getBlockX(), pos2.getBlockX());
+        this.yMin = Math.min(pos1.getBlockY(), pos2.getBlockY());
+        this.zMin = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+        this.xMax = Math.max(pos1.getBlockX(), pos2.getBlockZ());
+        this.yMax = Math.max(pos1.getBlockY(), pos2.getBlockY());
+        this.zMax = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+        calculateCenters();
+    }
+    
+    protected void setBounds(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
+        this.xMin = xMin;
+        this.yMin = yMin;
+        this.zMin = zMin;
+        this.xMax = xMax;
+        this.yMax = yMax;
+        this.zMax = zMax;
+        calculateCenters();
+    }
+    
+    protected void setWorldName(String worldName) {
+        this.worldName = worldName;
+    }
+    
+    protected void setXMin(int xMin) {
+        this.xMin = xMin;
+        calculateCenters();
+    }
+    
+    protected void setYMin(int yMin) {
+        this.yMin = yMin;
+        calculateCenters();
+    }
+    
+    protected void setZMin(int zMin) {
+        this.zMin = zMin;
+        calculateCenters();
+    }
+    
+    protected void setXMax(int xMax) {
+        this.xMax = xMax;
+        calculateCenters();
+    }
+    
+    protected void setYMax(int yMax) {
+        this.yMax = yMax;
+        calculateCenters();
+    }
+    
+    protected void setZMax(int zMax) {
+        this.zMax = zMax;
+        calculateCenters();
+    }
+    
+    public String getWorldName() {
+        return worldName;
+    }
+    
+    public int getXMin() {
+        return xMin;
+    }
+    
+    public int getYMin() {
+        return yMin;
+    }
+    
+    public int getZMin() {
+        return zMin;
+    }
+    
+    public int getXMax() {
+        return xMax;
+    }
+    
+    public int getYMax() {
+        return yMax;
+    }
+    
+    public int getZMax() {
+        return zMax;
+    }
+    
+    public double getXMinCentered() {
+        return xMinCentered;
+    }
+    
+    public double getYMinCentered() {
+        return yMinCentered;
+    }
+    
+    public double getZMinCentered() {
+        return zMinCentered;
+    }
+    
+    public double getXMaxCentered() {
+        return xMaxCentered;
+    }
+    
+    public double getYMaxCentered() {
+        return yMaxCentered;
+    }
+    
+    public double getZMaxCentered() {
+        return zMaxCentered;
     }
     
     /**
