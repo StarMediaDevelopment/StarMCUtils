@@ -347,16 +347,6 @@ public class Cuboid {
     }
     
     /**
-     * Checks to see if this cuboid contains a player
-     *
-     * @param player The player
-     * @return If the player is within this cuboid
-     */
-    public boolean contains(Player player) {
-        return this.contains(player.getLocation());
-    }
-    
-    /**
      * Checks to see if this cuboid contains a location, with a margine
      *
      * @param loc   The location
