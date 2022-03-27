@@ -1,12 +1,12 @@
 package com.starmediadev.plugins.starmcutils.region;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.starmediadev.nmswrapper.NMS;
+import com.starmediadev.nmswrapper.NMS.Version;
+import com.starmediadev.plugins.starmcutils.workload.WorkloadThread;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -30,7 +30,7 @@ public class Cuboid {
         this.xMin = Math.min(pos1.getBlockX(), pos2.getBlockX());
         this.yMin = Math.min(pos1.getBlockY(), pos2.getBlockY());
         this.zMin = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
-        this.xMax = Math.max(pos1.getBlockX(), pos2.getBlockZ());
+        this.xMax = Math.max(pos1.getBlockX(), pos2.getBlockX());
         this.yMax = Math.max(pos1.getBlockY(), pos2.getBlockY());
         this.zMax = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
         calculateCenters();
@@ -76,6 +76,50 @@ public class Cuboid {
         this.yMax = yMax;
         this.zMax = zMax;
         calculateCenters();
+    }
+    
+    public void createOutline(JavaPlugin plugin, Material material) {
+        List<Location> locations = new ArrayList<>();
+        Location minimum = getMinimum();
+        Location maximum = getMaximum();
+    
+        getCubeHalf(locations, minimum, maximum, minimum.getBlockZ(), minimum.getBlockX());
+        getCubeHalf(locations, minimum, maximum, maximum.getBlockZ(), maximum.getBlockX());
+    
+        for (int x = minimum.getBlockX(); x <= maximum.getBlockX(); x++) {
+            for (int z = minimum.getBlockZ(); z <= maximum.getBlockZ(); z++) {
+                Location location = new Location(getWorld(), x, minimum.getY(), z);
+                locations.add(location);
+                location = new Location(getWorld(), x, maximum.getY(), z);
+                locations.add(location);
+            }
+        }
+    
+        WorkloadThread workloadThread = new WorkloadThread(NMS.getNMS(Version.MC_1_18_R2));
+        for (Location location : locations) {
+            workloadThread.addWorkload(() -> {
+                Block block = location.getBlock();
+                block.setType(material);
+            });
+        }
+    
+        workloadThread.start(plugin);
+    }
+    
+    private void getCubeHalf(List<Location> locations, Location minimum, Location maximum, int blockZ, int blockX) {
+        for (int x = minimum.getBlockX(); x <= maximum.getBlockX(); x++) {
+            for (int y = minimum.getBlockY(); y <= maximum.getBlockY(); y++) {
+                Location location = new Location(getWorld(), x, y, blockZ);
+                locations.add(location);
+            }
+        }
+        
+        for (int z = minimum.getBlockZ(); z <= maximum.getBlockZ(); z++) {
+            for (int y = minimum.getBlockY(); y <= maximum.getBlockY(); y++) {
+                Location location = new Location(getWorld(), blockX, y, z);
+                locations.add(location);
+            }
+        }
     }
     
     protected void setWorldName(String worldName) {
