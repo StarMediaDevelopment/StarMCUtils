@@ -18,10 +18,9 @@ public class Updater implements Runnable {
     @Override
     public void run() {
         for (UpdateType type : UpdateType.values()) {
-            final long lastRun = type.getLastRun();
             if (type.run()) {
                 try {
-                    plugin.getServer().getPluginManager().callEvent(new UpdateEvent(type, lastRun));
+                    plugin.getServer().getPluginManager().callEvent(new UpdateEvent(type, type.getLastRun(), type.getCurrentRun()));
                 } catch (Exception ex) {
                     try {
                         throw new UpdateException(ex);

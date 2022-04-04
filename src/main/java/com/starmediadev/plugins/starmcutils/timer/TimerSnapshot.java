@@ -24,12 +24,12 @@ public class TimerSnapshot {
         return updatingNow;
     }
 
-    public long reset() {
-        return setLength(timer.getLength());
+    public void reset() {
+        setLength(timer.getLength());
     }
 
-    public long setLength(long l) {
-        return timer.setLength(l);
+    public void setLength(long l) {
+        timer.setLength(l);
     }
 
     public void setPaused(boolean paused) {

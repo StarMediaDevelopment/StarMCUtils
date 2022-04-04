@@ -7,8 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 public class Timer {
-    private static List<TimerSnapshot> queuedTasks = new ArrayList<>();
     private static List<Timer> timers = new ArrayList<>();
+    
     public Map<UpdateType, Long> lastUpdates = new HashMap<>();
     private ReturnableCallback<TimerSnapshot, Boolean> callback;
     private boolean cancelled = false;
@@ -33,35 +33,41 @@ public class Timer {
                         iterator.remove();
                         continue;
                     }
+                    
+                    if (timer.isPaused()) {
+                        continue;
+                    }
+                    
+                    if (timer.getTimeLeft() <= 0) {
+                        continue;
+                    }
+                    
+                    long currentTime = System.currentTimeMillis();
 
                     List<UpdateType> types = new ArrayList<>();
                     for (UpdateType type : UpdateType.values()) {
                         long last = timer.lastUpdates.getOrDefault(type, 0L);
-                        if (System.currentTimeMillis() - last >= type.getLength()) {
-                            timer.lastUpdates.put(type, System.currentTimeMillis());
+                        if (currentTime - last >= type.getLength()) {
+                            timer.lastUpdates.put(type, currentTime);
                             types.add(type);
                         }
                     }
                     timer.count();
-
-                    queuedTasks.add(new TimerSnapshot(timer, timer.time, types.toArray(new UpdateType[0])));
+    
+                    TimerSnapshot timerSnapshot = new TimerSnapshot(timer, timer.time, types.toArray(new UpdateType[0]));
+                    Boolean value = timer.getCallback().callback(timerSnapshot);
+                    if (!value) {
+                        iterator.remove();
+                    }
                 }
             }
         }, 0L, 1L);
-        plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-            @Override
-            public synchronized void run() {
-                for (TimerSnapshot snapshot : queuedTasks) {
-                    if (snapshot != null && snapshot.getTimer() != null && !snapshot.getTimer().callback.callback(snapshot)) {
-                        timers.remove(snapshot.getTimer());
-                    }
-                }
-
-                queuedTasks.clear();
-            }
-        }, 1L, 2L);
     }
-
+    
+    public static List<Timer> getTimers() {
+        return timers;
+    }
+    
     public boolean isCancelled() {
         return cancelled;
     }
@@ -72,7 +78,11 @@ public class Timer {
         }
         time -= 50;
     }
-
+    
+    public ReturnableCallback<TimerSnapshot, Boolean> getCallback() {
+        return callback;
+    }
+    
     public static String formatTime(int time) {
         final int minutes = time / 60;
         time -= minutes * 60;
@@ -111,15 +121,37 @@ public class Timer {
         return text;
     }
 
-    public long reset() {
-        return setLength(length);
+    public void reset() {
+        setLength(length);
+    }
+    
+    public boolean isPaused() {
+        return this.paused > -1;
     }
 
-    public long setLength(long l) {
+    public void setLength(long l) {
         this.length = l;
         this.time = l;
-        return l;
     }
+    
+    public void addLength(long l) {
+        this.length += l;
+        this.time += l;
+    }
+    
+    public void setTime(long l) {
+        if (l > this.length) {
+            throw new IllegalArgumentException("The new time cannot be greather than the length");
+        }
+        
+        this.time = l;
+    }
+    
+    public void addTime(long l) {
+        setTime(this.time + l);
+    }
+    
+    //TODO remove time and length
 
     public void setPaused(boolean paused) {
         if (!paused) {

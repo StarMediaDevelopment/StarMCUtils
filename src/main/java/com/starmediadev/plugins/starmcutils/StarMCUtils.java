@@ -7,6 +7,7 @@ import com.starmediadev.plugins.starmcutils.region.SelectionManager;
 import com.starmediadev.plugins.starmcutils.skin.SkinManager;
 import com.starmediadev.plugins.starmcutils.updater.Updater;
 import com.starmediadev.plugins.starmcutils.util.*;
+import com.starmediadev.plugins.starmcutils.timer.Timer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -39,6 +40,8 @@ public class StarMCUtils extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(SelectionManager.class, selectionManager, this, ServicePriority.Highest);
         Bukkit.getServicesManager().register(SkinManager.class, skinManager, this, ServicePriority.Highest);
+        
+        Timer.startTimerUpdater(this);
         
         colorsConfig = new Config(this, "colors.yml");
         colorsConfig.setup();
