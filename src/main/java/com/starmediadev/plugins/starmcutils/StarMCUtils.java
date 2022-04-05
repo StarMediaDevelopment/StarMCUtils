@@ -71,17 +71,17 @@ public class StarMCUtils extends JavaPlugin implements Listener {
                 try {
                     checkColorValues(colorCode, hexValue);
                 } catch (Exception e) {
-                    actor.sendColoredMessage(e.getMessage());
+                    actor.sendMessage(e.getMessage());
                     return;
                 }
             
                 if (ColorUtils.getCustomColor(colorCode) != null) {
-                    actor.sendColoredMessage("&cThat color code is already defined.");
+                    actor.sendMessage("&cThat color code is already defined.");
                     return;
                 }
             
                 ColorUtils.addCustomColor(colorCode, hexValue);
-                actor.sendMessage(MCUtils.color("&eYou added a color with code &b") + colorCode + MCUtils.color(" &eand hex value &b") + hexValue);
+                actor.sendUncoloredMessage(MCUtils.color("&eYou added a color with code &b") + colorCode + MCUtils.color(" &eand hex value &b") + hexValue);
             }
         };
         addColorSubCommand.addArgument(new Argument("colorCode", true, "You must provide the code of the color"));
@@ -91,11 +91,11 @@ public class StarMCUtils extends JavaPlugin implements Listener {
         customColorsCommand.addSubCommand(new SubCommand(customColorsCommand, "list", "Lists all colors", "starmcutils.colors.list") {
             @Override
             public void handleCommand(StarCommand starCommand, CommandActor actor, String[] previousArgs, String label, String[] args) {
-                actor.sendColoredMessage("&eList of available colors");
+                actor.sendMessage("&eList of available colors");
                 ColorUtils.getColors().forEach((code, value) -> {
                     String hex = Integer.toHexString(value.getColor().getRGB()).toUpperCase();
                     hex = hex.substring(2);
-                    actor.sendMessage(MCUtils.color("&7- ") + code + MCUtils.color("&7: #") + hex);
+                    actor.sendUncoloredMessage(MCUtils.color("&7- ") + code + MCUtils.color("&7: #") + hex);
                 });
             }
         });
@@ -107,12 +107,12 @@ public class StarMCUtils extends JavaPlugin implements Listener {
                 try {
                     checkColorValues(colorCode, hexValue);
                 } catch (Exception e) {
-                    actor.sendColoredMessage(e.getMessage());
+                    actor.sendMessage(e.getMessage());
                     return;
                 }
             
                 ColorUtils.addCustomColor(colorCode, hexValue);
-                actor.sendMessage(MCUtils.color("&eYou set the color code &b") + colorCode + MCUtils.color(" &eto &b") + hexValue);
+                actor.sendUncoloredMessage(MCUtils.color("&eYou set the color code &b") + colorCode + MCUtils.color(" &eto &b") + hexValue);
             }
         };
         setColorSubCommand.addArgument(new Argument("colorCode", true, "You must provide the code of the color"));

@@ -1,6 +1,5 @@
 package com.starmediadev.plugins.starmcutils.command;
 
-import com.starmediadev.plugins.starmcutils.util.MCUtils;
 import com.starmediadev.utils.collection.IncrementalMap;
 
 import java.util.*;
@@ -37,7 +36,9 @@ public class SubCommand extends StarCommand {
     }
     
     public final void handleSubCommands(CommandActor actor, String[] oldPreviousArgs, String oldLabel, String[] args) {
+        System.out.println("Handling sub commands of the sub command " + this.getName());
         if (this.subCommands.isEmpty()) {
+            System.out.println("Sub commands is empty for " + this.name);
             return;
         }
         
@@ -49,30 +50,51 @@ public class SubCommand extends StarCommand {
             System.arraycopy(args, 1, afterArgs, 0, args.length - 1);
         }
     
+        System.out.println("Determined the previous arguments to be " + Arrays.toString(previousArgs));
+        System.out.println("Determined the label for the additional sub command to be " + label);
+        System.out.println("Determined the remaining arguments to be " + Arrays.toString(afterArgs));
+    
+        boolean foundSubCommand = false;
         for (SubCommand subCommand : this.subCommands) {
+            System.out.println("Checking registered subcommand " + subCommand.getName() + " in parent " + this.getName());
             if (subCommand.matchesName(label)) {
+                System.out.println("The registered sub command " + subCommand.getName() + "in parent" + this.getName() + " matches the label provided");
+                foundSubCommand = true;
+                System.out.println("Checking sub command arguments");
                 IncrementalMap<Argument> arguments = subCommand.getArguments();
                 if (!arguments.isEmpty()) {
                     for (int i = 0; i < arguments.size(); i++) {
                         Argument argument = arguments.get(i);
+                        System.out.println("Found argument: " + argument.getName());
                         if (argument != null) {
                             if (argument.isRequired()) {
+                                System.out.println("Argument " + argument.getName() + " is required");
                                 try {
-                                    String arg = args[i];
+                                    String arg = afterArgs[i];
                                     if (arg == null || arg.equals("")) {
                                         throw new IllegalArgumentException();
                                     }
                                 } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
-                                    actor.sendMessage(MCUtils.color("&c" + argument.getErrorMessage()));
+                                    actor.sendMessage("&c" + argument.getErrorMessage());
                                     return;
                                 }
+                            } else {
+                                System.out.println("Argument " + argument.getName() + " is not required");
                             }
                         }
                     }
+                } else {
+                    System.out.println("No arguments for sub command: " + subCommand.getName() + " are registered");
                 }
+                System.out.println("Handling direct sub command implementation for " + subCommand.getName() + " in parent " + this.getName());
                 subCommand.handleCommand(this, actor, previousArgs, label, afterArgs);
+                System.out.println("Handling additional sub commands in the sub command " + subCommand.getName() + " in parent " + this.getName());
                 subCommand.handleSubCommands(actor, previousArgs, label, args);
             }
+        }
+    
+        if (!foundSubCommand) {
+            actor.sendMessage("&cCould not find a sub command.");
         }
     }
     

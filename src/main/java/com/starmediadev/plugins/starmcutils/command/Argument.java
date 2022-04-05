@@ -1,11 +1,12 @@
 package com.starmediadev.plugins.starmcutils.command;
 
-import java.util.List;
+import java.util.*;
 
 public class Argument {
     protected String name;
     protected boolean required;
     protected String errorMessage;
+    protected List<String> completions = new ArrayList<>();
     
     public Argument(String name) {
         this.name = name;
@@ -18,7 +19,7 @@ public class Argument {
     }
     
     public List<String> getCompletions() {
-        return null;
+        return this.completions;
     }
     
     public String getName() {

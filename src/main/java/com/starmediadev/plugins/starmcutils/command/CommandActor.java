@@ -15,12 +15,12 @@ public class CommandActor {
         return sender;
     }
     
-    public void sendMessage(String message) {
+    public void sendUncoloredMessage(String message) {
         sender.sendMessage(message);
     }
     
-    public void sendColoredMessage(String message) {
-        this.sendMessage(MCUtils.color(message));
+    public void sendMessage(String message) {
+        sender.sendMessage(MCUtils.color(message));
     }
     
     public Player getPlayer() {
