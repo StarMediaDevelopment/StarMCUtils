@@ -4,7 +4,7 @@ import com.starmediadev.plugins.starmcutils.util.MCUtils;
 import com.starmediadev.utils.collection.IncrementalMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -45,19 +45,13 @@ public class CommandManager implements TabExecutor {
             sender.sendMessage(MCUtils.color("&cOnly players and console can use that command."));
             return true;
         }
-    
-        System.out.println("Main Command Permission Check");
         
         if (starCommand.getPermission() != null && !starCommand.getPermission().equals("")) {
             if (!sender.hasPermission(starCommand.getPermission())) {
                 sender.sendMessage(MCUtils.color("&cYou do not have permission to use that command."));
                 return true;
-            } else {
-                System.out.println("Has permission");
             }
         }
-    
-        System.out.println("Arguments Check");
         
         CommandActor actor = new CommandActor(sender);
         IncrementalMap<Argument> arguments = starCommand.getArguments();
@@ -80,9 +74,7 @@ public class CommandManager implements TabExecutor {
             }
         }
         starCommand.handleCommand(actor, label, args);
-        System.out.println("Handle Command");
         starCommand.handleSubCommands(actor, args);
-        System.out.println("Handle Sub Commands");
         return true;
     }
     
@@ -108,19 +100,33 @@ public class CommandManager implements TabExecutor {
             return null;
         }
         
-        //return getCompletions(starCommand, args, args.length - 1, 0);
-        return null;
+        return getCompletions(starCommand, args, args.length - 1, 0);
     }
     
     private List<String> getCompletions(StarCommand starCommand, String[] args, int argIndex, int cmdIndex) {
         if (argIndex < 0) {
             return null;
         }
+        
         List<String> completions = new ArrayList<>();
         
-        if (cmdIndex == argIndex) {
-            if (starCommand.getArguments().size() > 0) {
-                for (Argument argument : starCommand.getArguments().values()) {
+        if (starCommand.getSubCommands().size() > 0 && starCommand.getArguments().size() == 0) {
+            if (cmdIndex < argIndex) {
+                cmdIndex++;
+                for (SubCommand subCommand : starCommand.getSubCommands()) {
+                    if (subCommand.matchesName(args[cmdIndex - 1])) {
+                        completions.addAll(getCompletions(subCommand, args, argIndex, cmdIndex));
+                    }
+                }
+            } else {
+                for (SubCommand subCommand : starCommand.getSubCommands()) {
+                    completions.add(subCommand.getName());
+                }
+            }
+        } else if (starCommand.getSubCommands().size() == 0 && starCommand.getArguments().size() > 0) {
+            int scArgIndex = argIndex - cmdIndex;
+            for (Argument argument : starCommand.getArguments().values()) {
+                if (argument.getIndex() == scArgIndex) {
                     if (argument.getCompletions().size() > 0) {
                         for (String completion : argument.getCompletions()) {
                             if (completion.startsWith(args[argIndex])) {
@@ -136,21 +142,9 @@ public class CommandManager implements TabExecutor {
                             leadSymbol = '[';
                             endSymbol = ']';
                         }
+                        
                         completions.add(leadSymbol + argument.getName() + endSymbol);
                     }
-                }
-            } else if (starCommand.getSubCommands().size() > 0) {
-                for (SubCommand subCommand : starCommand.getSubCommands()) {
-                    if (subCommand.getName().startsWith(args[argIndex])) {
-                        completions.add(subCommand.getName());
-                    }
-                }
-            }
-        } else {
-            if (starCommand.getSubCommands().size() >= argIndex) {
-                cmdIndex++;
-                for (SubCommand subCommand : starCommand.getSubCommands()) {
-                    completions.addAll(getCompletions(subCommand, args, argIndex, cmdIndex));
                 }
             }
         }

@@ -6,6 +6,7 @@ public class Argument {
     protected String name;
     protected boolean required;
     protected String errorMessage;
+    protected int index;
     protected List<String> completions = new ArrayList<>();
     
     public Argument(String name) {
@@ -32,5 +33,13 @@ public class Argument {
     
     public String getErrorMessage() {
         return errorMessage;
+    }
+    
+    public int getIndex() {
+        return index;
+    }
+    
+    public void setIndex(int index) {
+        this.index = index;
     }
 }
